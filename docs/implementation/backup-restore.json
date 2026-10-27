@@ -1,0 +1,11 @@
+{
+  "date": "2026-10-16T06:22:07.520Z",
+  "status": "BLOCKED",
+  "reason": "PostgreSQL client tools absent; set PG_TOOLS_BIN to PostgreSQL 18+ client bin directory",
+  "missing": [
+    "pg_dump",
+    "pg_restore"
+  ],
+  "sourceUnchanged": true,
+  "restoreAttempted": false
+}

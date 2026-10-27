@@ -1,0 +1,118 @@
+{
+  "date": "2026-10-16T06:12:46.008Z",
+  "environment": {
+    "platform": "win32",
+    "cpu": "12th Gen Intel(R) Core(TM) i5-12500H",
+    "memoryGB": 16
+  },
+  "samples": [
+    {
+      "level": "easy",
+      "ply": 0,
+      "move": {
+        "from": 64,
+        "to": 1
+      },
+      "nodes": 44,
+      "depth": 1,
+      "ms": 3.923400000000001,
+      "legal": true
+    },
+    {
+      "level": "easy",
+      "ply": 1,
+      "move": {
+        "from": 0,
+        "to": 1
+      },
+      "nodes": 41,
+      "depth": 1,
+      "ms": 1.4668000000000063,
+      "legal": true
+    },
+    {
+      "level": "easy",
+      "ply": 2,
+      "move": {
+        "from": 70,
+        "to": 7
+      },
+      "nodes": 34,
+      "depth": 1,
+      "ms": 1.0970999999999975,
+      "legal": true
+    },
+    {
+      "level": "medium",
+      "ply": 0,
+      "move": {
+        "from": 64,
+        "to": 1
+      },
+      "nodes": 172,
+      "depth": 2,
+      "ms": 27.980000000000004,
+      "legal": true
+    },
+    {
+      "level": "medium",
+      "ply": 1,
+      "move": {
+        "from": 0,
+        "to": 1
+      },
+      "nodes": 156,
+      "depth": 2,
+      "ms": 19.804599999999994,
+      "legal": true
+    },
+    {
+      "level": "medium",
+      "ply": 2,
+      "move": {
+        "from": 70,
+        "to": 63
+      },
+      "nodes": 492,
+      "depth": 2,
+      "ms": 16.592899999999986,
+      "legal": true
+    },
+    {
+      "level": "hard",
+      "ply": 0,
+      "move": {
+        "from": 64,
+        "to": 1
+      },
+      "nodes": 18246,
+      "depth": 3,
+      "ms": 1300.1528999999998,
+      "legal": true
+    },
+    {
+      "level": "hard",
+      "ply": 1,
+      "move": {
+        "from": 0,
+        "to": 1
+      },
+      "nodes": 7299,
+      "depth": 4,
+      "ms": 775.3140000000001,
+      "legal": true
+    },
+    {
+      "level": "hard",
+      "ply": 2,
+      "move": {
+        "from": 70,
+        "to": 63
+      },
+      "nodes": 22475,
+      "depth": 3,
+      "ms": 1300.2206,
+      "legal": true
+    }
+  ]
+}

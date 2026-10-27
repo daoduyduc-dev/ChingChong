@@ -1,0 +1,1448 @@
+
+
+
+ĐẶC TẢ YÊU CẦU NGHIỆP VỤVÀ YÊU CẦU HỆ THỐNG
+HỆ THỐNG GAME CỜ TƯỚNG TRỰC TUYẾN
+Website Responsive  •  PvP Real-time  •  Phòng chơi  •  Lưu/tiếp tục ván  •  Chat/Video  •  AI Offline
+
+
+
+Thuộc tính
+Giá trị
+Phiên bản
+v3.0 – Bản biên soạn hợp nhất để rà soát/nghiệm thu yêu cầu
+Ngày lập
+14/10/2026
+Loại tài liệu
+Business Analysis + Software Requirements Specification (BA/SRS)
+Nền tảng
+Website chạy trên trình duyệt, responsive desktop/mobile; không có app native trong phạm vi
+Công nghệ nền được giữ
+React/Vite/TypeScript; Node.js/Express/Socket.IO; PostgreSQL/Prisma
+Tài liệu nguồn
+Đặc tả BA Game Cờ Tướng v2.0 – 14 trang, 5 Phase, 10 Epic
+Trạng thái
+Dự thảo tổng hợp: quyết định người dùng + quy tắc BA đề xuất; chưa phải chứng cứ đã kiểm thử chạy hệ thống
+
+Lưu ý kiểm soát thay đổi: mọi quy tắc gắn [XN] được người yêu cầu xác nhận; [BA] là mặc định thiết kế được phân tích bổ sung; [V2] kế thừa tài liệu gốc; [SAU] chưa triển khai ở bản đầu. Các con số đề xuất cần được kiểm chứng trong giai đoạn triển khai.
+
+0. HƯỚNG DẪN SỬ DỤNG VÀ TRUY VẾT QUYẾT ĐỊNH
+0.1. Cấp độ nguồn yêu cầu
+Ký hiệu
+Ý nghĩa
+Cách xử lý khi xung đột
+[XN]
+Quyết định người dùng đã xác nhận qua trao đổi.
+Ưu tiên cao nhất trong phạm vi phiên bản này.
+[V2]
+Yêu cầu từ tài liệu Đặc tả BA v2.0.
+Chỉ giữ nếu không trái [XN] hoặc bị hoãn.
+[BA]
+Mặc định BA/kiến trúc được bổ sung để khép kín luồng.
+Có thể điều chỉnh khi duyệt; không giả định đã được chủ dự án xác nhận.
+[SAU]
+Tính năng dự kiến mở rộng, không phải điều kiện hoàn thành bản đầu.
+Không tự triển khai trước các phần trọng tâm.
+
+Thứ tự ưu tiên khi có mâu thuẫn: [XN] > giới hạn phạm vi bản đầu > [V2] > [BA]. Mọi thay đổi sau này phải cập nhật Business Rule, User Story, Acceptance Criteria, API/Socket Contract và Test Case có liên quan.
+0.2. Cấu trúc và cách nghiệm thu
+Tài liệu tổ chức theo nghiệp vụ và theo phụ thuộc kỹ thuật; mỗi module gồm yêu cầu, luồng chính, nhánh ngoại lệ, trạng thái, quy tắc và kiểm thử. Product Backlog ở cuối ánh xạ sang thứ tự ưu tiên triển khai, không thay thế đặc tả nghiệp vụ.
+Phạm vi kiểm thử: hệ thống phải chứng minh bằng test tự động hoặc kịch bản kiểm thử được chạy thực tế. Các mục tiêu độ trễ, khả năng offline và tính ổn định WebRTC phải được đo trên môi trường thực; việc viết trong tài liệu không đồng nghĩa tính năng đã đạt.
+1. TỔNG QUAN, PHẠM VI VÀ ROADMAP
+1.1. Tầm nhìn sản phẩm và người dùng
+Xây dựng website cờ tướng cho người mới, người chơi giải trí và người chơi có kinh nghiệm. Hệ thống hỗ trợ chơi PvP thời gian thực, tạo và tham gia phòng Public/Private, mời bạn bằng các kênh chia sẻ, ghép ngẫu nhiên, lưu và tiếp tục ván với sự đồng thuận của hai kỳ thủ, chat và gọi video 1–1 tùy chọn. Chế độ đánh với máy chạy offline trên trình duyệt sau khi đã tải đầy đủ tài nguyên cần thiết. [XN]
+1.2. Thứ tự ưu tiên theo yêu cầu của chủ dự án
+Ưu tiên
+Hạng mục trải nghiệm
+Phân biệt với phụ thuộc triển khai
+1
+Đăng ký / đăng nhập
+Bao gồm Guest, hồ sơ tối thiểu, quên/đổi mật khẩu.
+2
+Tạo phòng game
+Có phòng Public/Private và danh sách phòng có thể tham gia.
+3
+Mời bạn vào phòng
+Trong game, qua MXH (URL), mã phòng và QR.
+4
+Load bàn cờ + lưu bàn cờ
+Lưu PvP theo thỏa thuận hai phía; khôi phục ván đã lưu, không phải tự động lưu mọi ván PvP.
+5
+Chơi hai người online
+Luật cờ, đồng hồ, Socket.IO, reconnect, thắng/thua/hòa.
+6
+Khung chat giữa hai người + Video Call
+Chat người chơi; Video Call WebRTC tùy chọn, cần sự đồng ý đôi bên.
+7
+Chơi với máy
+Ba mức khó, tài nguyên offline và tự lưu/khôi phục cục bộ.
+
+Lưu ý phụ thuộc: bàn cờ + máy kiểm tra luật + phiên trạng thái trận phải được xây trước khi lưu/khôi phục và trước khi PvP vận hành. Thứ tự ở trên là ưu tiên bàn giao theo trải nghiệm, không phải thứ tự commit mã nguồn bắt buộc. [BA]
+1.3. Trong phạm vi bản đầu
+Web responsive desktop/mobile; không bắt buộc ứng dụng Android/iOS. [XN]
+Đăng ký bắt buộc email và username, đăng nhập bằng email/username + mật khẩu; Google/Facebook; Guest; một phiên đăng nhập; quên mật khẩu bằng email. [XN]
+Phòng Public/Private; danh sách phòng; mời qua danh sách bạn bè, URL mạng xã hội, mã phòng/QR; tự ghép ngẫu nhiên không ELO. [XN]
+Bàn cờ 9×10, luật 7 quân, chiếu bí, hết nước, lộ mặt Tướng, chống trường chiếu theo BR quy định; chỉ hòa do hai bên thỏa thuận trong bản đầu. [XN]
+Đồng hồ không giới hạn hoặc 5/10/15/30 phút tổng mỗi người, hai bên xác nhận; reconnect 60 giây và chống lạm dụng. [XN]
+Yêu cầu lưu ván PvP và tiếp tục ván cũ với sự đồng ý của hai kỳ thủ gốc; AI tự lưu cục bộ. [XN]
+Chat giữa hai kỳ thủ; Video Call tùy chọn với xác nhận của cả hai; AI chơi không Internet sau tải trước. [XN]
+1.4. Chưa triển khai ở bản đầu
+ELO, cấp bậc, bảng xếp hạng, mùa giải và ghép cặp theo ELO. [SAU]
+Khán giả trực tiếp, chat khán giả và stream video cho khán giả. [SAU]
+Đặt cược, đổi thưởng, giao dịch tiền hoặc xu trong phòng chơi: loại khỏi phạm vi hoàn toàn. [XN]
+Ứng dụng native và deep link mở app mobile; chỉ dùng URL website cho mạng xã hội và QR. [XN+BA]
+Giải thích nước AI bằng LLM, tùy chỉnh thế cờ để học nâng cao, nhập/xuất kỳ phổ ngoài website, giải đấu, hệ thống anti-cheat nâng cao. [SAU]
+1.5. Kiến trúc ở mức nguyên tắc
+Giữ React + Vite + TypeScript tại Frontend; Node.js + Express + Socket.IO tại Backend; PostgreSQL + Prisma làm nguồn dữ liệu bền vững. Backend là authoritative server cho PvP: xác thực nước đi, lượt, đồng hồ và phán quyết. React hiển thị và gửi ý định thao tác. WebRTC phục vụ âm thanh/hình ảnh; Socket.IO làm signaling, không dùng Socket để truyền trực tiếp media. [XN+BA]
+Triển khai ban đầu theo modular monolith và một instance Backend; Redis chỉ bổ sung khi thật sự cần hàng đợi/presence dùng chung nhiều instance hoặc đảm bảo trải nghiệm vận hành được đo kiểm. Tránh microservices sớm. [BA]
+2. ACTOR, QUYỀN HẠN VÀ TÀI KHOẢN
+2.1. Actor và ma trận quyền
+Hành động
+Guest
+User
+Admin
+Vào sảnh, xem phòng Public
+Có
+Có
+Có
+Chơi với máy không Internet
+Có, dữ liệu phiên
+Có, lưu cục bộ
+Có
+Tạo/ vào phòng, PvP ngẫu nhiên
+Có
+Có
+Có theo quyền User
+Chat / đề nghị Video Call PvP
+Có khi đang thi đấu
+Có
+Theo vai trò kỳ thủ
+Kết bạn, tìm bạn theo danh tính
+Không
+Có
+Có theo quyền User
+Lưu PvP dài hạn, tiếp tục ván đã lưu
+Không
+Có, phải cả hai User
+Không được thay hai kỳ thủ
+Lịch sử cá nhân dài hạn
+Không
+Có
+Xem theo quyền quản trị
+Quản lý báo cáo, khóa/soft-delete tài khoản
+Không
+Không
+Có; ghi audit log
+
+Ngoài vai trò tài khoản, quyền phụ thuộc ngữ cảnh: OWNER/INVITEE/PLAYER_RED/PLAYER_BLACK. Chủ phòng có quyền quản lý phòng trước trận, nhưng không được thay đổi kết quả và không có quyền sửa nước đi đối thủ. [BA]
+2.2. Yêu cầu xác thực và hồ sơ
+Mã và yêu cầu
+Mô tả điều kiện/chức năng bắt buộc
+Nguồn
+AUTH-01Đăng ký
+Bắt buộc username, email và mật khẩu tối thiểu 8 ký tự có chữ và số (giới hạn tối đa phù hợp thuật toán hash); không bắt OTP email khi đăng ký. Username và email chuẩn hóa và duy nhất giữa các tài khoản đang hoạt động; mật khẩu hash Argon2id hoặc bcrypt cấu hình phù hợp. [XN+BA]
+XN
+AUTH-02Đăng nhập
+Chấp nhận email hoặc username + mật khẩu; Google và Facebook OAuth; không tự động hợp nhất nhà cung cấp và tài khoản cũ chỉ vì email trùng. [XN+BA]
+XN/BA
+AUTH-03Một phiên
+Một tài khoản chỉ có một phiên điều khiển hợp lệ tại một thời điểm; phiên mới thu hồi refresh token và quyền điều khiển của phiên cũ. Trình duyệt khác/tab khác không được song song điều khiển. [XN]
+XN
+AUTH-04Làm mới phiên
+Access Token ngắn hạn; refresh token xoay vòng và thu hồi được; giữa trận tự refresh nếu hợp lệ. [XN+BA]
+XN/BA
+AUTH-05Quên mật khẩu
+Nhập email, gửi URL đặt lại token dùng một lần có thời hạn; lỗi phản hồi không để lộ email có tồn tại hay không. [XN+BA]
+XN/BA
+AUTH-06Đổi mật khẩu
+Yêu cầu đăng nhập và mật khẩu hiện tại đối với tài khoản mật khẩu; thu hồi phiên cũ theo chính sách, giữ phiên hiện tại bằng tái xác thực nếu hợp lệ. [XN+BA]
+XN/BA
+AUTH-07Xóa tài khoản
+Soft-delete, vô hiệu hóa đăng nhập/tokens, ẩn hồ sơ công khai; bảo toàn các bản ghi lịch sử của người cùng trận theo chính sách giảm thiểu dữ liệu. [XN+BA]
+XN/BA
+AUTH-08Guest
+Cho chơi PvP/AI nhưng không thể kết bạn hoặc lưu PvP dài hạn; Guest ID ngẫu nhiên theo trình duyệt/phiên, không phụ thuộc hardware device fingerprint. [XN+BA]
+XN/BA
+AUTH-09Chuyển Guest
+Khi tạo/đăng nhập User, hỏi người dùng có muốn gộp dữ liệu Guest phù hợp trong phiên không; không được ghi đè các ván lâu dài của User. [XN]
+XN
+AUTH-10Hồ sơ
+Tên hiển thị được đổi tối đa mỗi 7 ngày; tên có thể trùng kèm ID công khai; avatar ảnh riêng hoặc ảnh có sẵn; hồ sơ cơ bản công khai và có thể ẩn lịch sử. [XN]
+XN
+AUTH-11Trạng thái
+Danh sách bạn hiển thị Online/Offline/Đang chơi theo phiên được Server xác nhận. [XN]
+XN
+
+UC-A01 – Đăng ký / đăng nhập bằng mật khẩu
+Tiền điều kiện: Người dùng truy cập trang đăng nhập; chưa có phiên hợp lệ.
+1. Chọn Đăng ký và nhập username, email, mật khẩu; Frontend kiểm tra định dạng để hướng dẫn.
+2. Backend chuẩn hóa username/email, kiểm tra trùng, giới hạn tần suất và hash mật khẩu.
+3. Tạo User + profile, không yêu cầu OTP email, cấp phiên đăng nhập và chuyển vào sảnh.
+4. Ở luồng Đăng nhập, gửi định danh email/username và mật khẩu; Server xác thực, thu hồi phiên cũ nếu có rồi cấp phiên mới.
+Nhánh ngoại lệ: 
+Email/username đã dùng: không tạo tài khoản mới, hiển thị lỗi phù hợp.
+Mật khẩu không đúng/tài khoản bị khóa/đã soft-delete: từ chối đăng nhập; thông báo không tiết lộ thông tin nhạy cảm.
+Đăng nhập thiết bị mới trong trận: phiên cũ mất quyền; phiên mới truy xuất trận có thể reconnect theo thời hạn.
+Đăng ký liên tục hoặc brute force: rate limit, backoff/captcha chỉ nếu thật sự cần.
+Hậu điều kiện: Một tài khoản có tối đa một phiên điều khiển hợp lệ; màn hình sảnh có profile tương ứng.
+UC-A02 – Quên mật khẩu và đổi mật khẩu
+Tiền điều kiện: Tài khoản mật khẩu đã đăng ký và có email; đặt lại không cần đăng nhập.
+1. Quên mật khẩu: người dùng nhập email; Server trả thông báo trung tính, tạo token ngẫu nhiên băm trong DB và gửi link HTTPS tới email.
+2. Người dùng mở link, nhập mật khẩu mới; Server kiểm tra token chưa dùng/chưa hết hạn, đổi hash và thu hồi token cũ.
+3. Đổi mật khẩu: từ phần Cài đặt của phiên đang đăng nhập, xác minh mật khẩu hiện tại rồi cập nhật mật khẩu mới.
+Nhánh ngoại lệ: 
+Email không nhận thư hoặc link hết hạn: yêu cầu gửi lại có giới hạn, không cấp quyền đổi trực tiếp.
+Token reset đã dùng hoặc sai: từ chối an toàn; không ghi đè mật khẩu.
+Tài khoản OAuth thuần túy chưa có mật khẩu: phải có luồng thiết lập mật khẩu đã xác minh, không giả định có mật khẩu cũ.
+Hậu điều kiện: Token reset hết hiệu lực; phiên không còn hợp lệ được thu hồi theo chính sách bảo mật.
+2.3. Danh sách bạn bè, mời bạn và chặn
+Mã và yêu cầu
+Mô tả điều kiện/chức năng bắt buộc
+Nguồn
+FRIEND-01Tìm bạn
+Tìm theo username, Public User ID hoặc email; với email ưu tiên khớp chính xác, không công khai email trong kết quả nếu không thuộc chủ tài khoản. [XN+BA]
+XN/BA
+FRIEND-02Kết bạn
+Có gửi/nhận/chấp nhận/từ chối/hủy lời mời và hủy kết bạn; hai yêu cầu chéo nhau được tự động xác nhận kết bạn. [XN]
+XN
+FRIEND-03Từ chối
+Sau bị từ chối có thể gửi lại ngay nếu chưa bị chặn; rate limit để ngăn spam. [XN+BA]
+XN/BA
+FRIEND-04Chặn
+Chặn mọi tương tác trực tiếp, kể cả mời chơi, chat, kết bạn và video call; Server kiểm tra cả khi đã có phòng cũ. [XN]
+XN
+FRIEND-05Thông báo
+Thông báo trực tiếp qua Socket và lưu bản ghi cho các sự kiện quan trọng (mời, lưu/tiếp tục ván); trạng thái đọc/chưa đọc. [BA]
+BA
+
+UC-F01 – Gửi lời mời kết bạn và xử lý hai chiều
+Tiền điều kiện: Người gửi/nhận có tài khoản User chưa bị chặn nhau.
+1. A tìm B bằng username/User ID/email rồi gửi lời mời.
+2. Server chống lời mời trùng và ghi trạng thái PENDING, gửi thông báo cho B.
+3. B chấp nhận hoặc từ chối; nếu B đã gửi yêu cầu ngược cho A trước đó, Server gộp thành quan hệ ACCEPTED duy nhất.
+Nhánh ngoại lệ: 
+Một trong hai chặn người còn lại: tự hủy yêu cầu chờ; không cho gửi mới.
+Đã là bạn: bỏ qua yêu cầu lặp, không sinh hai quan hệ.
+Người dùng spam lời mời: rate limit và cooldown kỹ thuật, không thay đổi quyền gửi lại ngay nếu không bị chặn.
+Hậu điều kiện: Hai người có trạng thái bạn bè nhất quán trên cả hai tài khoản.
+3. MÔ HÌNH TRẠNG THÁI VÀ QUY TẮC TOÀN CỤC
+3.1. Trạng thái phòng (Room)
+Trạng thái
+Ý nghĩa
+Chuyển trạng thái hợp lệ
+WAITING
+Đã tạo; chưa đủ hai người hoặc có người chưa sẵn sàng.
+READY, CLOSED
+READY
+Đủ hai kỳ thủ, cùng xác nhận cấu hình và sẵn sàng.
+COUNTDOWN, WAITING, CLOSED
+COUNTDOWN
+Đếm ngược đồng bộ trước trận.
+IN_MATCH, WAITING
+IN_MATCH
+Phòng gắn với ván đang hoạt động.
+POST_MATCH, CLOSED, WAITING khi ván được SAVED
+POST_MATCH
+Ván đã kết thúc; chờ tái đấu hoặc giải tán.
+WAITING, CLOSED
+CLOSED
+Phòng giải tán; code/link bị vô hiệu.
+Kết thúc, không tái sử dụng roomId
+
+Trạng thái tạm dừng do reconnect, xin lưu, xin hòa, Undo thuộc về Match và Request, không nên biến thành Room State duy nhất. [BA]
+3.2. Trạng thái ván cờ (Match)
+Trạng thái
+Ý nghĩa / tính bất biến
+PENDING
+Đã ghép cặp, chưa chạy đồng hồ hoặc nhận nước.
+ACTIVE
+Đang thi đấu; chấp nhận nước hợp lệ từ người đến lượt và phiên hợp lệ.
+PAUSED_RECONNECT
+Tạm dừng do mất kết nối; trạng thái bàn cờ và clock đóng băng.
+SAVED
+Hai kỳ thủ User đồng ý lưu và snapshot đã commit; được mở lại khi hai bên đồng ý.
+RESUMING
+Đang chờ cả hai xác nhận tiếp tục đúng ván SAVED; chỉ tạo một phiên tiếp tục.
+FINISHED
+Đã kết thúc thắng/thua/hòa với outcome bất biến.
+CANCELED
+Hủy không có người thắng, ví dụ cả hai mất kết nối quá hạn; biên bản vẫn được lưu.
+
+FINISHED và CANCELED là trạng thái cuối; SAVED không tính là trận hoàn thành. Các trạng thái đồng hồ, lời mời và signaling tách thành trường/lifecycle riêng; một Match chỉ nhận một terminal event qua compare-and-set/transaction. [BA]
+3.3. Các loại yêu cầu hai phía
+Request type
+Người gửi
+Người duyệt
+Kết quả
+SAVE_MATCH
+Một trong hai kỳ thủ User
+Đối thủ cùng Match
+APPROVED → Match SAVED
+RESUME_MATCH
+Một trong hai kỳ thủ gốc
+Kỳ thủ còn lại
+APPROVED + hai bên READY → Match ACTIVE
+DRAW_OFFER
+Một kỳ thủ
+Kỳ thủ còn lại
+APPROVED → FINISHED/DRAW
+UNDO_OFFER
+Một kỳ thủ giao hữu
+Kỳ thủ còn lại
+APPROVED → restore lịch sử/clock
+VIDEO_INVITE
+Một kỳ thủ
+Kỳ thủ còn lại
+APPROVED → bắt đầu negotiation WebRTC
+
+Các Request có requestId, matchId, senderId, receiverId, status=PENDING/APPROVED/REJECTED/EXPIRED/CANCELED, expiry và matchVersion khi tạo. Mỗi loại chỉ cho phép tối đa một yêu cầu đang chờ liên quan cùng Match; loại trừ xung đột theo quy tắc tại mục 6 và 7. [BA]
+3.4. Ràng buộc bất biến (invariants)
+INV-01: Mỗi Match có đúng hai vị trí kỳ thủ (Red, Black), không được trùng chủ thể điều khiển; Guest có định danh phiên khác User. [BA]
+INV-02: Tại một thời điểm một tài khoản/User hoặc Guest chỉ được điều khiển tối đa một Match PvP ACTIVE/PAUSED_RECONNECT. [BA]
+INV-03: Mọi nước đi PvP được Server xác thực; không chấp nhận nước khi Match không ACTIVE hoặc phiên gửi không phải current session. [BA]
+INV-04: Mỗi nước được ghi một lần với matchVersion tăng đơn điệu; yêu cầu trùng không làm thay đổi bàn cờ hai lần. [BA]
+INV-05: Không lưu PvP nếu thiếu sự đồng ý của một trong hai kỳ thủ gốc hoặc trong lúc Match đã terminal. [XN+BA]
+INV-06: Match SAVED chỉ được resume bởi đúng hai tài khoản gốc; màu quân, lượt đi, nước đi và clock không bị đặt lại. [XN]
+INV-07: Video/micro của một người không thể bị người còn lại bật từ xa; chỉ phát khi đã được cấp quyền và đồng thuận tương ứng. [XN+BA]
+INV-08: Khi CANCELED do cả hai mất mạng, không ghi DRAW hoặc WIN/LOSS. [XN]
+INV-09: AI Offline không cần truy cập API để chọn nước sau khi gói AI đã tải và cache thành công. [XN+BA]
+4. SẢNH, TẠO PHÒNG, MỜI PHÒNG VÀ GHÉP TRẬN
+4.1. Danh sách phòng và quyền chủ phòng
+Mã và yêu cầu
+Mô tả điều kiện/chức năng bắt buộc
+Nguồn
+ROOM-01Tạo phòng
+User hoặc Guest tạo Public (hiển thị danh sách) hoặc Private (ẩn danh sách, tham gia bằng mã/link); bắt buộc chọn thời gian: không giới hạn, 5, 10, 15 hoặc 30 phút mỗi kỳ thủ. [XN]
+XN
+ROOM-02Cấu hình
+Cho chọn màu quân ngẫu nhiên hoặc thỏa thuận, chế độ thời gian, quyền Undo, phạm vi phòng; hai phía phải chấp nhận cấu hình trước khi bắt đầu. [XN+BA]
+XN/BA
+ROOM-03Danh sách
+Liệt kê phòng Public còn vị trí chờ, hiển thị tên chủ phòng, thời gian, trạng thái, số người 1/2 hay 2/2; phòng đang đấu chỉ hiển thị trạng thái, không cho tham gia khi khán giả chưa có. [XN+BA]
+XN/BA
+ROOM-04Mã và URL
+Mã phòng 6 chữ số, duy nhất giữa phòng hoạt động; URL HTTPS có roomId/mã không mang token đăng nhập; QR biểu diễn URL đó. [V2+BA]
+V2/BA
+ROOM-05Vào phòng
+Client yêu cầu vào; Server kiểm tra còn chỗ, không tự chơi với chính mình, trạng thái phòng, quyền truy cập, chặn người dùng và các trận đang tham gia. [BA]
+BA
+ROOM-06Sẵn sàng
+Khi hai người đồng ý cấu hình, cả hai bấm Sẵn sàng, Server đếm ngược 3–2–1; trước đó có thể thoát không tính thua. [V2+BA]
+V2/BA
+ROOM-07Rời phòng
+Khi chưa bắt đầu: khách rời → quay về chờ; chủ rời → phòng tự giải tán sau timeout ngắn hoặc đóng nếu chủ chủ động giải tán. Khi đang đấu áp dụng quy tắc trận. [BA]
+BA
+ROOM-08Tái đấu
+Sau khi FINISHED, hai người có thể đề nghị tái đấu trong cùng phòng; phải đồng ý lại cấu hình/màu/thời gian nếu đổi, tạo matchId mới. [BA]
+BA
+ROOM-09Public/Private
+Public/Private chỉ điều khiển khám phá phòng; Private không được suy ra là mọi người biết nhau. Video vẫn cần hai bên đồng ý. [XN+BA]
+XN/BA
+
+UC-R01 – Tạo phòng và bắt đầu trận
+Tiền điều kiện: Người tạo đã vào sảnh; không đang điều khiển một PvP khác.
+1. Chọn Tạo phòng → Public hoặc Private, thời gian, tùy chọn giao hữu và gửi yêu cầu tạo.
+2. Server cấp roomId bất biến, roomCode 6 số không trùng phòng hoạt động, đưa chủ phòng vào WAITING.
+3. Người thứ hai vào qua danh sách, lời mời, mã hoặc link; Server giữ chỗ bằng thao tác nguyên tử.
+4. Hai người kiểm tra cấu hình thời gian/màu, chọn Sẵn sàng; Server xác nhận đồng thuận và chuyển READY.
+5. Server phát countdown 3–2–1 có mốc serverTime; tạo Match PENDING → ACTIVE, khởi tạo bàn cờ chuẩn và đồng hồ.
+Nhánh ngoại lệ: 
+Hai người cùng yêu cầu chỗ cuối: chỉ một người được chấp nhận, người còn lại thấy "Phòng đã đủ người".
+Thay đổi cấu hình sau một người đã READY: hủy trạng thái READY của cả hai, yêu cầu xác nhận lại.
+Có người rời hoặc mất kết nối trước ACTIVE: hủy đếm ngược và trả phòng WAITING; không tính thua.
+RoomCode/URL hết hiệu lực hoặc bị chặn: từ chối vào phòng, không rò rỉ dữ liệu người chơi.
+Guest đăng nhập giữa WAITING: cập nhật định danh phiên theo quy trình chuyển Guest, không nhân đôi vị trí.
+Hậu điều kiện: Chỉ khi đủ hai kỳ thủ và đồng thuận cấu hình mới tạo ván đang chạy; mỗi Match gắn với một roomId.
+UC-R02 – Chia sẻ lời mời qua trong game, mạng xã hội, QR
+Tiền điều kiện: Phòng còn hiệu lực; người mời có quyền của kỳ thủ/chủ phòng.
+1. Chọn Mời bạn → gửi thông báo trực tiếp cho bạn trong danh sách hoặc sao chép URL/mã phòng.
+2. Người dùng có thể chia sẻ URL qua Zalo/Messenger/Telegram; server trả metadata an toàn; QR chứa URL HTTPS.
+3. Người nhận mở link: nếu chưa có phiên, cho lựa chọn Guest hoặc đăng nhập; sau đó tiếp tục xác minh quyền vào.
+4. Nếu phòng WAITING và còn chỗ, Server cho tham gia; nếu không, hiển thị trạng thái và đường quay lại sảnh.
+Nhánh ngoại lệ: 
+Phòng đầy hoặc đang đấu: thông báo không thể tham gia; không tự chuyển sang khán giả tại bản đầu.
+Phòng CLOSED: URL cũ hiển thị đã giải tán, không trỏ sang roomId mới.
+Lời mời bị thu hồi/hết hạn: từ chối; lời mời không cấp quyền vượt qua danh sách chặn.
+Đang ở chính phòng được mở link: điều hướng về phòng hiện tại, không chiếm vị trí thứ ba.
+Hậu điều kiện: Người nhận vào đúng một phòng hoặc nhận được lỗi rõ ràng, không phải nhập lại mã sau xác thực nếu URL còn hợp lệ.
+UC-R03 – Tìm trận ngẫu nhiên không ELO
+Tiền điều kiện: Người chơi đã đăng nhập hoặc Guest; không tham gia một PvP khác.
+1. Chọn Tìm trận nhanh và chọn thời gian (không giới hạn, 5/10/15/30).
+2. Server đưa người chơi vào một hàng đợi cho cấu hình đó; ngăn tìm trùng bằng cùng một actorId.
+3. Server tìm một người tương thích, khác actorId, chưa chặn nhau; giữ cả hai slot theo transaction/lock.
+4. Hai người nhận thông báo đã tìm thấy, xác nhận Sẵn sàng; bắt đầu 3–2–1 rồi vào ván.
+Nhánh ngoại lệ: 
+Một người hủy trước khi ghép: rời hàng đợi ngay; sau khi ghép nhưng chưa ACTIVE: hủy cặp và đưa người còn lại về hàng đợi theo lựa chọn.
+Người được ghép offline/timeout READY: hủy ghép, không xử thua vì chưa ACTIVE.
+Không tìm được: tiếp tục chờ hoặc cho người dùng hủy; không giả tạo bot nếu không có người thật.
+Hai người đã chặn nhau: không ghép, không hiển thị danh tính.
+Hậu điều kiện: Kết quả ghép là một PvP giao hữu không tính ELO; không có nghĩa bắt buộc hai người kết bạn.
+4.2. Chat liên hệ và UX cơ bản
+Sảnh có điều hướng Tìm trận nhanh / Danh sách phòng / Tạo phòng / Nhập mã phòng / Đánh với máy / Ván đã lưu / Bạn bè / Hồ sơ. Trên mobile bố cục co giãn không để bàn cờ hoặc đồng hồ bị che bởi video/chat; các thao tác nguy hiểm (đầu hàng, xóa tài khoản, hủy ván đã lưu) cần xác nhận rõ ràng. [BA]
+5. BÀN CỜ, LUẬT CỜ, ĐỒNG HỒ VÀ KẾT QUẢ
+5.1. Quy tắc bàn cờ và biểu diễn nước đi
+Bàn cờ 9 cột × 10 hàng, hai cung Tướng, sông và đủ 7 loại quân: Tướng, Sĩ, Tượng, Xe, Pháo, Mã, Tốt. Đỏ đi trước; mỗi người chỉ đi khi đến lượt. Quy tắc: Sĩ/Tướng không ra khỏi cung, Tượng không qua sông và có mắt tượng, Mã bị cản chân, Pháo khi ăn cần đúng một ngòi, Xe đi theo đường thẳng trống, Tốt không được lùi và qua sông mới được đi ngang. Không chấp nhận hai Tướng trực diện không quân cản hoặc nước tự đặt Tướng vào thế bị chiếu. [V2+XN]
+Tọa độ giao tiếp chuẩn [BA]: (x,y) với x=0..8 từ trái sang phải khi nhìn từ phía quân Đen, y=0..9 từ hàng quân Đen đến hàng quân Đỏ; lưu màu quân và orientation riêng, không đổi tọa độ gốc khi xoay UI. FEN Xiangqi là biểu diễn snapshot thuận tiện, nhưng nguồn sự thật gồm board state có phiên bản + danh sách nước đi + sideToMove + clock. Engine AI có adapter riêng để chuyển FEN/ký hiệu tùy nhà cung cấp.
+5.1.1. Quy tắc trường chiếu thao tác được – bản đầu [BA]
+Định nghĩa đơn giản hóa để code/test nhất quán (không tuyên bố là toàn bộ luật thi đấu chuyên nghiệp): mỗi vị trí được nhận dạng bằng cách bố trí quân và bên sắp đi, không xét đồng hồ. Khi một bên P cố thực hiện nước tạo ra lần xuất hiện thứ ba của cùng một vị trí, và chuỗi chu kỳ lặp gần nhất thể hiện P đã chiếu Tướng đối phương sau mọi lượt đi của P trong chu kỳ đó, thì nước của P bị xem là tiếp tục trường chiếu bị cấm và phải từ chối. Chỉ lặp thế cờ ba lần mà không có chuỗi chiếu liên tục của một phía thì không tự cấm/hòa. Mọi bộ đếm phải dựa trên lịch sử nước hợp lệ đã commit; sau Undo/Resume tính lại từ lịch sử có hiệu lực. [BA]
+Đây là bộ luật dự án để đáp ứng Q12. Luật trường tróc và phân xử các dạng lặp phức tạp không được ngầm đưa vào; cần tập test fixtures (thế ban đầu, chuỗi nước, expected blocked move) làm tiêu chí nghiệm thu trước khi tuyên bố chức năng chống trường chiếu hoàn thành. [BA]
+Mã và yêu cầu
+Mô tả điều kiện/chức năng bắt buộc
+Nguồn
+RULE-01Di chuyển
+Kiểm tra tính hợp lệ của quân nguồn và ô đích, cản quân, lượt, quân bị ăn, màu quân; chống tự chiếu và lộ mặt Tướng. [V2]
+V2
+RULE-02Chiếu bí
+Nếu bên tới lượt đang bị chiếu và không có nước thoát hợp lệ thì thua; không cần ăn trực tiếp Tướng. [XN+BA]
+XN/BA
+RULE-03Hết nước
+Nếu bên tới lượt không còn nước đi hợp lệ dù không bị chiếu thì thua (Stalemate của Xiangqi). [XN]
+XN
+RULE-04Trường chiếu
+Theo dõi chu kỳ vị trí và chuỗi nước chiếu; từ chối nước tiếp tục chu kỳ trường chiếu bị cấm, yêu cầu đổi nước; nếu hết nước hợp lệ xử thua. Phải có bộ test thế cờ kiểm chứng. [XN+BA]
+XN/BA
+RULE-05Hòa
+Bản đầu chỉ hòa do yêu cầu một bên và bên kia đồng ý; không tự hòa vì 60 nước không ăn quân hoặc thiếu quân tấn công. [XN]
+XN
+RULE-06Hiệu ứng
+Chỉ thị nước hợp lệ, ô vừa đi, ô ăn quân, thông báo chiếu; không lấy hiệu ứng Frontend làm căn cứ hợp lệ. [V2+BA]
+V2/BA
+RULE-07Kỳ phổ
+Lưu log nước đi chuẩn hóa, thứ tự, đồng hồ, capture/check, snapshot; tạo biểu diễn tiếng Việt phục vụ Replay, không để ký hiệu văn bản là nguồn xác thực duy nhất. [V2+BA]
+V2/BA
+
+5.2. Đồng hồ thi đấu
+Mã và yêu cầu
+Mô tả điều kiện/chức năng bắt buộc
+Nguồn
+TIME-01Chọn thời gian
+Không giới hạn hoặc 5/10/15/30 phút tổng mỗi kỳ thủ; hai bên đồng ý trước khi ACTIVE. Không thêm thời gian nước đi và Byo-yomi ở bản đầu. [XN]
+XN
+TIME-02Nguồn thời gian
+Dùng Server monotonic elapsed time/timestamp, không lấy đồng hồ Client làm căn cứ phán xử; gửi timestamp chuẩn để Client hiển thị nội suy. [V2+BA]
+V2/BA
+TIME-03Chuyển lượt
+Chỉ trừ thời gian kỳ thủ đang đến lượt; đổi bên khi nước đi được Server chấp nhận. Nước đi bị từ chối không đặt lại thời gian. [BA]
+BA
+TIME-04Hết giờ
+Với ván có giới hạn, khi đồng hồ xuống 0 thì kỳ thủ đó thua, trừ khi Match đã terminal trước đó. Ván không giới hạn không có xử thua theo đồng hồ. [BA]
+BA
+TIME-05Lúc disconnect
+PAUSED_RECONNECT làm dừng cả hai đồng hồ; khi ACTIVE trở lại tiếp tục từ cùng remainingMs. [XN]
+XN
+TIME-06Lúc lưu ván
+Chỉ đóng băng đồng hồ sau khi save được commit; khi chỉ gửi yêu cầu lưu, đồng hồ vẫn chạy để tránh câu giờ. [BA]
+BA
+TIME-07Lúc tiếp tục
+Giữ đúng remainingMs và sideToMove tại thời điểm đã lưu; không đặt lại theo cấu hình khác. [XN+BA]
+XN/BA
+
+UC-G01 – Gửi và xác thực nước đi PvP
+Tiền điều kiện: Match ACTIVE, người gửi là kỳ thủ đúng lượt, phiên điều khiển hợp lệ.
+1. Client gửi moveId duy nhất, matchId, matchVersion dự kiến và from/to.
+2. Backend kiểm tra xác thực, ownership, trạng thái Match, lượt, đồng hồ còn lại và luật; lock Match hoặc optimistic concurrency.
+3. Nếu hợp lệ, cập nhật board + sideToMove + capture/check + remainingMs + matchVersion trong transaction.
+4. Server kiểm tra checkmate/stalemate/trường chiếu/kết thúc, phát match:move-accepted hoặc match:ended đến hai Client.
+5. Client đồng bộ stateVersion và đánh dấu nước đi; server snapshot là authoritative.
+Nhánh ngoại lệ: 
+MoveId trùng: trả ack kết quả cũ, không áp dụng lại.
+Version cũ/sai lượt/nước không hợp lệ: trả lỗi có mã và snapshot mới, không sửa trạng thái ván.
+Nước đến sau timeout hợp lệ: áp dụng chính sách thời điểm nhận tại Server; không tin timestamp Client.
+Hai yêu cầu nước đi đồng thời: chỉ một yêu cầu phù hợp phiên bản trạng thái được commit.
+Hậu điều kiện: Bàn cờ, đồng hồ và lịch sử của hai kỳ thủ thống nhất tại một matchVersion.
+5.3. Xin hòa, Undo, đầu hàng, kết thúc và tái đấu
+Mã và yêu cầu
+Mô tả điều kiện/chức năng bắt buộc
+Nguồn
+RESULT-01Xin hòa
+Một kỳ thủ gửi lời mời hòa; đối phương có quyền đồng ý/từ chối. Không đồng ý thì tiếp tục, không tự hòa. [XN]
+XN
+RESULT-02Undo giao hữu
+Chỉ với PvP không xếp hạng và khi đối phương đồng ý; lưu bản ghi hoàn tác, đưa board/history/timers về snapshot thống nhất. [V2+BA]
+V2/BA
+RESULT-03Đầu hàng
+Yêu cầu xác nhận từ người đầu hàng; khi Server nhận quyết định hợp lệ thì xử thua, không cần đối phương đồng ý. [BA]
+BA
+RESULT-04Hòa/Thua
+Kết quả win/lose/draw/canceled đi kèm reasonCode; không tính canceled thành hòa. [XN+BA]
+XN/BA
+RESULT-05Tái đấu
+Hai bên chấp thuận; Match mới có ID mới và bắt đầu từ bàn cờ chuẩn. [BA]
+BA
+
+Thứ tự ưu tiên sự kiện [BA]: trước tiên khóa Match bằng version; nếu terminal đã commit, mọi save/undo/draw/move muộn đều bị từ chối. Các sự kiện chờ xác nhận không ngăn di chuyển mặc định; nếu board version thay đổi đến mức không thể áp dụng yêu cầu Undo/Save nguyên dạng, yêu cầu cũ được vô hiệu hoặc tái xác nhận theo quy tắc tương ứng.
+6. MẤT KẾT NỐI, CHUYỂN THIẾT BỊ VÀ LỖI SERVER
+6.1. Nguyên tắc reconnect đã chốt và cách diễn giải
+Khi một kỳ thủ mất kết nối, ván chuyển PAUSED_RECONNECT và tạm dừng cả hai đồng hồ. Thời hạn reconnect chuẩn là 60 giây. Nếu hết hạn mà đối thủ vẫn đang online hợp lệ, người ở lại thắng; nếu cả hai đều offline quá thời hạn của chính mình, hủy ván, không phân định thắng/thua, lưu biên bản. [XN]
+Một người mất mạng trước, đối thủ cũng mất mạng sau: không tuyên bố thắng cho người đang offline. Nếu người thứ hai quay lại trước deadline của mình, còn người đầu đã quá hạn, người thứ hai được xử thắng; nếu cả hai quá hạn không ai hợp lệ quay lại thì CANCELED. Kết luận chỉ commit tại mốc và điều kiện quyết định; không suy diễn kết quả dựa trên thứ tự hiển thị ở Client. [BA]
+Mã và yêu cầu
+Mô tả điều kiện/chức năng bắt buộc
+Nguồn
+CONN-01Phát hiện
+Server phát hiện qua socket disconnect/heartbeat có xác nhận; thời điểm mất mạng được ghi tại Server, không tin dữ liệu Client. [BA]
+BA
+CONN-02Tạm dừng
+Bất kỳ một kỳ thủ mất kết nối → freeze board/clock và thông báo countdown; không nhận nước đi đến khi cả hai online. [XN]
+XN
+CONN-03Reconnect 60 giây
+Deadline riêng từng người kể từ thời điểm Server xác nhận mất mạng; không reset deadline bằng refresh hay mở Socket mới chưa auth. [XN+BA]
+XN/BA
+CONN-04Lạm dụng
+Ngân sách tổng thời gian pause do reconnect mỗi kỳ thủ trong một Match đề xuất 180 giây; mỗi lần tối đa 60 giây; khi hết ngân sách xử tương đương quá hạn. [BA]
+BA
+CONN-05Khôi phục
+Sau xác thực, Server gửi snapshot vị trí quân, sideToMove, clock, matchVersion, lịch sử đã commit và các request còn hiệu lực. [V2+BA]
+V2/BA
+CONN-06Hai người offline
+Cả hai hết hạn mà không ai đang online hợp lệ → CANCELED/BOTH_DISCONNECTED, vẫn ghi biên bản, không cập nhật thống kê W/L. [XN]
+XN
+CONN-07Chuyển thiết bị
+Một phiên điều khiển; đăng nhập ở thiết bị mới thu hồi phiên cũ rồi nối lại Match nếu còn trong thời hạn reconnect. [XN+BA]
+XN/BA
+CONN-08Server restart
+Match state được phục hồi từ PostgreSQL; nếu không thể bảo đảm độ chính xác đồng hồ thì áp dụng chế độ sự cố có thông báo, không tự tạo kết quả thắng vô căn cứ. [BA]
+BA
+
+UC-C01 – Người chơi mất mạng rồi quay lại
+Tiền điều kiện: Match đang ACTIVE, một kỳ thủ được Server phát hiện ngắt kết nối.
+1. Server ghi disconnectAt và deadline=disconnectAt+60s (giới hạn thêm theo budget), chuyển Match PAUSED_RECONNECT và freeze time.
+2. Đối thủ thấy trạng thái "Đang đợi kết nối lại", đồng hồ không chạy.
+3. Người mất mạng kết nối bằng phiên hợp lệ; Server xác thực actorId, rebind socket, gửi snapshot phiên bản mới.
+4. Khi hai người đều online trước khi điều kiện xử thua/hủy xảy ra, Match ACTIVE, clock chạy lại từ remainingMs.
+Nhánh ngoại lệ: 
+Nếu người mất mạng hết deadline trong khi đối thủ online, commit FINISHED/DISCONNECT_LOSS một lần.
+Nếu cả hai offline: theo dõi deadline riêng; khi cả hai đều quá hạn thì CANCELED/BOTH_DISCONNECTED.
+Nếu người còn lại quay lại sau khi deadline của đối phương đã hết nhưng trước deadline của mình, áp dụng phân xử thắng theo quy tắc BA mục 6.1.
+Client mang token cũ, phiên bị thu hồi hoặc actor không thuộc Match: không được reconnect hoặc nhận snapshot riêng tư.
+Nước đi pending gửi lại sau reconnect: dùng moveId/version để không ghi trùng.
+Hậu điều kiện: Trận được phục hồi nhất quán hoặc có một kết quả cuối/canceled duy nhất.
+6.2. Chuyển phiên khi vẫn còn ván
+Đăng nhập ở thiết bị mới là thao tác chủ động chuyển quyền. Phiên cũ bị thu hồi cả HTTP và Socket, tab cũ hiển thị "Tài khoản đã đăng nhập ở thiết bị khác" và không gửi nước. Thiết bị mới phải vào trạng thái trận bằng current session; không tự cộng thêm 60 giây bằng cách đăng nhập lặp. [XN+BA]
+6.3. Mất nguồn dữ liệu hoặc server restart
+PostgreSQL giữ snapshot + lịch sử nước đi committed. Khi khởi động lại, Server đối chiếu trạng thái Match gần nhất và tính toán kết quả theo nguyên tắc bảo toàn dữ liệu, không tự công nhận nước chưa commit. Nếu không thể xác nhận chính xác deadline hoặc trạng thái hai kỳ thủ, gắn trạng thái sự cố cần xử lý theo chính sách hủy an toàn, không mặc định bên nào thắng. Hỗ trợ ghi audit sự kiện lỗi. [BA]
+7. LƯU VÁN PVP, KHÔI PHỤC VÀ TIẾP TỤC ĐÚNG CẶP NGƯỜI
+7.1. Nguyên tắc phân biệt ba nghiệp vụ
+Loại nghiệp vụ
+Ai kích hoạt
+Đối tượng
+Có thể chơi tiếp?
+Lưu PvP theo thỏa thuận
+Một kỳ thủ đề nghị; cả hai chấp nhận
+Match SAVED lưu bền vững
+Có, chính cặp User ban đầu
+Khôi phục do mất mạng
+Hệ thống xác thực lại phiên
+Match PAUSED_RECONNECT
+Có nếu chưa timeout
+Biên bản ván kết thúc/hủy
+Hệ thống sau terminal
+Match FINISHED/CANCELED
+Không; chỉ Replay
+
+7.2. Quy tắc lưu ván
+Mã và yêu cầu
+Mô tả điều kiện/chức năng bắt buộc
+Nguồn
+SAVE-01Quyền lưu
+Chỉ hai tài khoản User đang là kỳ thủ của Match được lưu dài hạn; nếu có Guest, hệ thống yêu cầu đăng ký/chuyển thành User trước khi lưu. [XN+BA]
+XN/BA
+SAVE-02Đề nghị
+Bất kỳ một trong hai gửi SAVE_MATCH khi Match ACTIVE; yêu cầu hiển thị cho người kia, có chấp nhận/từ chối và thời hạn phản hồi. [XN+BA]
+XN/BA
+SAVE-03Hai phía
+Hai yêu cầu lưu chéo được gộp để xác nhận đồng thuận; một người không thể tự lưu và tự ký thay đối thủ. [BA]
+BA
+SAVE-04Đồng hồ
+Trong khi chờ phản hồi, đồng hồ vẫn chạy; sau khi chấp nhận đủ hai bên và transaction commit mới chuyển Match SAVED và dừng đồng hồ. [BA]
+BA
+SAVE-05Dữ liệu lưu
+Lưu matchId, hai userId, quân, full move log, FEN/board snapshot, sideToMove, remainingMs, clockMode, status, version và thời điểm lưu. [XN+BA]
+XN/BA
+SAVE-06Một sự thật
+Save chỉ được commit một lần; không cho save khi đã có kết quả terminal hoặc đang disconnect; khi race với move thì sử dụng thứ tự commit trên Server. [BA]
+BA
+SAVE-07Vòng đời
+Match SAVED không phải FINISHED; phòng cũ được giải tán hoặc trả sảnh, có thể chơi ván khác nhưng ván lưu vẫn tồn tại. [XN+BA]
+XN/BA
+SAVE-08Chống spam
+Đề nghị save có deadline đề xuất 30 giây và hạn chế gửi lại liên tiếp; khi từ chối/hết hạn, match tiếp tục theo đúng stateVersion, không tự đổi kết quả. [BA]
+BA
+
+UC-S01 – Xin lưu ván đang chơi
+Tiền điều kiện: Match ACTIVE; cả hai kỳ thủ là User hợp lệ; không có sự kiện terminal đã commit.
+1. A nhấn Lưu ván; Server ghi SAVE_MATCH PENDING với requestId, matchVersion và deadline.
+2. B thấy popup Đồng ý/Từ chối; clock tiếp tục đếm nếu là lượt đang chạy.
+3. B đồng ý: Server kiểm tra Match vẫn hợp lệ, tuần tự hóa với nước đi và phán quyết; ghi snapshot chính xác tại điểm commit.
+4. Transaction thành công → Match SAVED, ngừng đồng hồ, kết thúc điều khiển ván hiện tại, cả hai thấy thông báo "Đã lưu ván".
+5. Ván xuất hiện trong danh sách Ván đã lưu của hai User gốc, sẵn sàng gửi yêu cầu tiếp tục.
+Nhánh ngoại lệ: 
+B từ chối/hết hạn: đóng request, trận tiếp tục; A có thể chơi hoặc tự đầu hàng.
+B đã mất mạng: request không được tự coi là chấp nhận; xử lý reconnect riêng.
+A/B cùng đề nghị: hợp nhất thành một yêu cầu; nếu các hành động thể hiện sự đồng thuận đầy đủ thì lưu một lần.
+Nếu bị hết giờ/chiếu bí/đầu hàng trước khi save commit: yêu cầu save thất bại, kết quả cuối giữ nguyên.
+Nếu DB lỗi hoặc transaction rollback: không trả success, giữ/khôi phục Match ở trạng thái trước quyết định; hiển thị lỗi và cho thử lại khi hợp lệ.
+Nếu ván do Guest tham gia: hướng dẫn đăng ký; không tự ép tạo tài khoản và không biến thành ván SAVED chỉ cho một phía.
+Hậu điều kiện: SAVED snapshot đầy đủ, gắn bất biến với hai User gốc; không tồn tại thành công nửa chừng.
+7.3. Quy tắc tiếp tục ván đã lưu
+Mã và yêu cầu
+Mô tả điều kiện/chức năng bắt buộc
+Nguồn
+RESUME-01Danh sách
+Mỗi tài khoản thấy các ván SAVED mình tham gia, tên đối thủ, quân, ngày lưu, số nước, lượt và thời gian còn lại (nếu có). [BA]
+BA
+RESUME-02Đúng cặp
+Chỉ chính hai User ID của ván SAVED có quyền gửi/chấp thuận tiếp tục; không đổi đối thủ bằng mã phòng. [XN]
+XN
+RESUME-03Offline
+Nếu B offline, lưu thông báo yêu cầu RESUME_MATCH chờ B online; B có thể chấp nhận/từ chối; không tự bắt đầu khi chỉ một phía muốn. [XN]
+XN
+RESUME-04Hai bên sẵn sàng
+Sau đồng thuận, cả hai phải có phiên hợp lệ và bấm Sẵn sàng; hệ thống chỉ tạo một phòng/phiên resume cho matchId tương ứng. [XN+BA]
+XN/BA
+RESUME-05Khôi phục
+Giữ nguyên quân, vị trí, nước đi, sideToMove, remainingMs và cấu hình; không bốc thăm lại, không làm mới đồng hồ. [XN]
+XN
+RESUME-06Ván độc lập
+Hai người được phép có nhiều ván SAVED nhưng mỗi lần RESUME chọn matchId chính xác; không resume hai ván cùng lúc. [BA]
+BA
+RESUME-07Từ chối
+Nếu từ chối hoặc lời mời hết hạn, ván vẫn SAVED và có thể gửi lời mời mới sau này. [XN+BA]
+XN/BA
+RESUME-08Vòng đời xóa
+Nếu một trong hai soft-delete hoặc bị cấm chơi vĩnh viễn, ván SAVED được khóa khả năng resume; người còn lại có thể xem biên bản đã ẩn danh thay vì tự được xử thắng. [BA]
+BA
+
+UC-S02 – Tiếp tục ván đã lưu khi đối thủ offline
+Tiền điều kiện: Match SAVED; người gửi là một trong hai User ID gốc; chưa có quá trình RESUME_MATCH đồng thời.
+1. A mở danh sách Ván đã lưu, chọn một matchId, nhấn Mời tiếp tục.
+2. Server tạo RESUME_MATCH PENDING và lưu thông báo cho B kể cả B offline.
+3. B online sau đó, đọc thông báo rồi Đồng ý; Server bảo đảm A/B chưa ở trận PvP khác.
+4. Hai phía vào màn hình chuẩn bị, cùng READY; Server chuyển Match SAVED → RESUMING → ACTIVE bằng thao tác nguyên tử.
+5. Client nhận snapshot chính xác đã lưu; clock tiếp tục từ remainingMs, quân và lượt giữ nguyên.
+Nhánh ngoại lệ: 
+B từ chối/không phản hồi: ván vẫn SAVED, không hủy snapshot.
+Một trong hai đang chơi trận khác: không chiếm slot, gửi thông báo "Đang bận" và cho thử sau.
+Hai bên nhấn Resume đồng thời từ hai tab/thiết bị: transaction/unique lock cho chỉ một RESUMING instance.
+A đã logout/đổi thiết bị lúc B đồng ý: cần xác thực lại A và sẵn sàng cả hai; không tự active.
+Account bị soft-delete hoặc bị chặn: không tự biến người lạ thành kỳ thủ thay thế; xử lý theo quyền/ban.
+Hậu điều kiện: Chỉ đúng hai người được tiếp tục từ snapshot duy nhất, không nhân bản ván.
+7.4. Xử lý xung đột các yêu cầu
+Xung đột
+Xử lý quyết định [BA]
+SAVE pending + di chuyển
+Không khóa nước ngay; khi đã đủ đồng ý, lưu snapshot ở stateVersion commit hợp lệ; thông báo nếu phiên bản thay đổi cần cập nhật xác nhận.
+SAVE pending + reconnect
+Đóng hoặc treo yêu cầu chờ, không tự chấp thuận; reconnect là ưu tiên an toàn.
+SAVE pending + terminal
+Terminal có hiệu lực trước commit save thì từ chối save.
+UNDO pending + save
+Chỉ một thao tác ảnh hưởng state có thể commit tại một version; yêu cầu còn lại hết hiệu lực và phải tạo lại.
+DRAW pending + terminal
+Terminal ưu tiên; draw bị hủy.
+RESUME pending + trùng lời mời
+Không tạo hai phiên; gửi lại trạng thái request hiện hữu.
+SAVE commit + lỗi gửi Socket
+Backend đã commit → Client reconnect lấy snapshot SAVED; không chạy lại transaction.
+
+8. CHAT TRONG TRẬN VÀ VIDEO CALL 1–1
+8.1. Chat của hai kỳ thủ
+Mã và yêu cầu
+Mô tả điều kiện/chức năng bắt buộc
+Nguồn
+CHAT-01Phạm vi
+Chỉ hai kỳ thủ trong phòng trao đổi bằng text/emoji cơ bản; chưa có chat khán giả ở bản đầu. [XN+BA]
+XN/BA
+CHAT-02Gửi
+Giới hạn đề xuất 500 ký tự/tin; yêu cầu gửi có messageId, matchId, senderId, timestampServer; kiểm tra membership, chặn lẫn nhau và rate limit. [BA]
+BA
+CHAT-03Không gián đoạn
+Chat không khóa nước đi hoặc đồng hồ; giao diện trên màn hình nhỏ ưu tiên bàn cờ và đồng hồ. [BA]
+BA
+CHAT-04An toàn
+Giới hạn độ dài và tần suất, escape HTML, lọc link nguy hiểm; hỗ trợ tắt hiển thị và báo cáo nội dung. [BA]
+BA
+CHAT-05Lịch sử
+Đề xuất giữ chat theo vòng đời Match trong thời gian có thể reconnect; lịch sử chat dài hạn chỉ lưu nếu có lý do nghiệp vụ và chính sách riêng tư rõ. [BA]
+BA
+
+8.2. Video Call – chính sách quyền riêng tư
+Mã và yêu cầu
+Mô tả điều kiện/chức năng bắt buộc
+Nguồn
+VIDEO-01Tùy chọn
+Video Call là tính năng bắt buộc có nhưng không ép người chơi gọi; lời mời gọi phải được cả hai đồng ý trước khi signaling media. [XN]
+XN
+VIDEO-02Media ban đầu
+Camera và micro mặc định OFF; trình duyệt chỉ xin quyền thiết bị khi người dùng thao tác cho phép; đối phương không thể bật từ xa. [XN+BA]
+XN/BA
+VIDEO-03Cấu trúc
+Dùng WebRTC P2P + STUN/TURN khi cần; Socket.IO chỉ làm signaling. Chat và nước đi không phụ thuộc WebRTC. [V2+BA]
+V2/BA
+VIDEO-04Điều khiển
+Mỗi bên tự bật/tắt camera, micro và có thể tắt hiển thị/âm thanh từ đối phương; lỗi thiết bị không làm kết thúc Match. [V2+BA]
+V2/BA
+VIDEO-05Bảo mật
+Không ghi âm hoặc ghi hình trong bản đầu. Không stream cho khán giả. Chỉ kỳ thủ đúng matchId được nhận signaling. [XN+BA]
+XN/BA
+VIDEO-06Fallback
+Khi mạng yếu: hạ độ phân giải/bitrate → giữ audio nếu có thể → tắt media; luôn ưu tiên đồng bộ bàn cờ. [V2+BA]
+V2/BA
+VIDEO-07Đóng cuộc gọi
+Khi Match SAVED/FINISHED/CANCELED hoặc người chơi tắt cuộc gọi, dọn media tracks và signaling; không tác động kết quả cờ. [BA]
+BA
+
+UC-V01 – Hai kỳ thủ bắt đầu gọi video
+Tiền điều kiện: Hai kỳ thủ hợp lệ đang cùng một Match/Room; không bị chặn nhau.
+1. A chọn Gọi video; Server tạo VIDEO_INVITE và gửi cho B, chưa bật camera hoặc micro.
+2. B chọn Đồng ý; chỉ sau đó mỗi Client tự xin quyền camera/mic khi cần và hiển thị lựa chọn bật thiết bị.
+3. Nếu người dùng cho phép, hai phía tạo WebRTC offer/answer/ICE qua signaling có xác thực roomId/matchId.
+4. Khi kết nối, hiển thị khung video nhỏ không che bàn cờ; tự điều chỉnh chất lượng khi mạng yếu.
+Nhánh ngoại lệ: 
+B từ chối/hết hạn: không xin quyền, không mở media; trận cờ bình thường.
+Trình duyệt từ chối camera/mic: cho dùng voice nếu hợp lệ hoặc tiếp tục chỉ bàn cờ/chat.
+WebRTC không kết nối được: báo không kết nối media; không xử thua ván.
+Hai người mất mạng/reconnect: xác nhận trạng thái media và thương lượng lại khi cả hai sẵn sàng; không âm thầm bật camera sau phiên bị thu hồi.
+Match kết thúc/hủy/lưu: tự đóng các media tracks.
+Hậu điều kiện: Cuộc gọi được thực hiện chỉ khi cả hai chấp thuận và trình duyệt cho phép quyền thiết bị phù hợp.
+9. AI CHƠI OFFLINE TRÊN TRÌNH DUYỆT
+9.1. Định nghĩa offline và phân chia độ khó
+Chơi AI không Internet nghĩa là sau khi người dùng đã mở website và tải đầy đủ UI bundle, luật cờ, engine AI và các trọng số cần thiết, trình duyệt có thể mở lại chức năng AI và chọn nước mà không gọi Backend. Chế độ này phụ thuộc khả năng lưu trữ của trình duyệt và có thể mất tài nguyên nếu người dùng xóa bộ nhớ/cache. [XN+BA]
+Mức độ
+Yêu cầu cảm nhận
+Cách hiện thực đề xuất
+Dễ
+Người mới có khả năng thắng và học luật đi.
+Giới hạn thời gian/depth/skill, kiểm soát chọn nước để không mạnh quá mức.
+Trung bình
+Đủ thử thách với người đã biết chơi.
+Skill/search trung bình; tránh đi ngẫu nhiên vô lý.
+Khó
+Khó với người chơi có kinh nghiệm trong giới hạn máy.
+Tăng skill/search; giới hạn CPU để không làm nóng thiết bị.
+
+Không khẳng định 3 mức tương ứng chỉ số ELO cố định. Engine Pikafish WASM hoặc engine Xiangqi JS/WASM phù hợp sẽ được benchmark trước khi khóa dependency. Cần kiểm tra giấy phép mã nguồn và trọng số nếu có trước khi phân phối. [BA]
+Mã và yêu cầu
+Mô tả điều kiện/chức năng bắt buộc
+Nguồn
+AI-01Offline-ready
+Hiển thị rõ tài nguyên AI đã sẵn sàng offline hay cần tải thêm; lần đầu cần Internet. [XN+BA]
+XN/BA
+AI-023 cấp độ
+Chính xác 3 mức Dễ/Trung bình/Khó trong bản đầu; không tự thêm mức Kỳ Vương. [XN]
+XN
+AI-03Worker
+Chạy tính toán qua Web Worker/WASM không chặn UI; có giới hạn thời gian và cơ chế hủy engine process. [BA]
+BA
+AI-04Tự lưu
+Sau mỗi nước đi hợp lệ, tự ghi local snapshot/history; mở lại hỏi tiếp tục ván hay tạo mới. [XN+BA]
+XN/BA
+AI-05Guest
+Dữ liệu Guest AI chỉ trong phiên theo chính sách Guest; User có thể giữ dữ liệu local lâu hơn, không đảm bảo tồn tại nếu trình duyệt xóa cache. [XN+BA]
+XN/BA
+AI-06Undo/hint
+Cho Undo không giới hạn trong ván AI; Hint hướng dẫn nước hợp lệ ưu tiên mức tìm kiếm cao, không bật khi engine chưa sẵn sàng. [V2+BA]
+V2/BA
+AI-07Màu quân
+Người chơi chọn Đỏ/Đen trước ván; AI theo sideToMove và cùng core luật cờ. [BA]
+BA
+AI-08Không mạng
+AI không phụ thuộc HTTP/WebSocket backend sau khi offline-ready; không sử dụng engine chỉ chạy trên server làm phương án duy nhất. [XN]
+XN
+AI-09Tương thích
+Nếu thiếu bộ nhớ/không đủ CPU, báo rõ giới hạn và cho thử cấu hình nhẹ; tuyệt đối không giả lập AI offline khi buộc phải gọi Server. [BA]
+BA
+
+UC-AI01 – Tải, chơi AI và khôi phục offline
+Tiền điều kiện: Trình duyệt hỗ trợ Web Worker và bộ nhớ phù hợp; nếu lần đầu cần tải tài nguyên khi online.
+1. Người dùng chọn Chơi với máy; hệ thống kiểm tra service worker/cache/engine và hiển thị tiến độ tải khi thiếu.
+2. Chọn Dễ/Trung bình/Khó, quân Đỏ/Đen và bắt đầu; bàn cờ dùng bộ luật cờ chung.
+3. Người chơi đi nước hợp lệ; Worker tính nước AI trong thời gian phù hợp; ứng dụng kiểm tra kết quả engine và cập nhật ván.
+4. Sau mỗi nước, lưu snapshot atomically trong kho local phù hợp (IndexedDB; Guest lưu theo phiên).
+5. Lần mở lại offline: nếu tài nguyên còn cache và ván cũ hợp lệ, cho Tiếp tục hoặc Ván mới.
+Nhánh ngoại lệ: 
+Thiếu tài nguyên AI khi offline: thông báo không thể khởi chạy trước khi online tải đủ.
+Worker timeout/khởi tạo lỗi: thử lại hữu hạn, cho phép tiếp tục ván khi engine hoạt động trở lại, không tự tạo nước không hợp lệ.
+Cache/storage bị xóa: hiển thị cảnh báo, không hứa vẫn còn dữ liệu.
+Người chơi bấm Undo khi AI đang nghĩ: hủy suy luận trước khi restore, tránh nước AI cũ xuất hiện sau Undo.
+Đổi độ khó giữa ván: áp dụng từ lượt AI tiếp theo, không viết lại lịch sử đã đi.
+Hậu điều kiện: Có thể chơi AI độc lập mạng sau khi offline-ready; tính nhất quán giữa UI, luật và snapshot được kiểm chứng.
+10. LỊCH SỬ, REPLAY VÀ QUẢN TRỊ TỐI THIỂU
+10.1. Lưu lịch sử và Replay
+Hệ thống lưu trận PvP FINISHED và CANCELED có biên bản; Match SAVED nằm trong danh sách Ván đã lưu chứ không ghi là hoàn thành. Replay chỉ cho xem, không ghi nước vào Match gốc. Lịch sử cá nhân cần phân biệt thắng/thua/hòa/hủy. Khi người dùng chọn ẩn lịch sử công khai, đối thủ gốc vẫn có quyền xem biên bản của ván mà họ tham gia. [XN+BA]
+Tính năng
+Quy tắc tối thiểu
+Danh sách lịch sử
+Lọc theo ngày, đối thủ, kết quả, chế độ; hiển thị lý do kết thúc.
+Replay
+Đến đầu, lùi một nước, phát/tạm dừng tự động, tiến một nước, đến cuối; có góc nhìn Đỏ/Đen.
+Đồng hồ Replay
+Dùng các mốc sau mỗi nước nếu đã ghi, không giả lập trôi thời gian thực.
+Undo trong kỳ phổ
+Chỉ hiển thị chuỗi nước hiệu lực; có thể ghi audit các hành động Undo nhưng không trộn vào move log phát lại.
+Xóa tài khoản
+Không xóa nguyên bộ biên bản dùng chung; ẩn danh/giảm dữ liệu người soft-delete, khóa truy cập trái phép.
+
+10.2. Quyền Admin mức tối thiểu
+Để hệ thống vận hành và xử lý người chơi vi phạm, bản đầu có Admin tối thiểu: xem danh sách tài khoản, khóa/mở khóa, soft-delete theo thẩm quyền, duyệt báo cáo người chơi/chat, xem log kỹ thuật/trạng thái trận ở mức cần thiết. Admin không được sửa nước đi hoặc tùy tiện thay kết quả đã terminal; mọi thao tác quản trị phải có audit log. [BA]
+ELO, khán giả, livestream video, mở các phòng nhiều người và công cụ quản lý giải đấu để giai đoạn sau. [SAU]
+11. YÊU CẦU DỮ LIỆU VÀ CONTRACT KỸ THUẬT
+11.1. Mô hình dữ liệu logic đề xuất
+Thực thể
+Trường/ý nghĩa cốt lõi
+Ràng buộc
+User
+id, username, normalizedEmail, passwordHash?, displayName, publicCode, avatar, status, deletedAt
+unique username/email (theo chính sách soft-delete), publicCode; không lộ hash
+AuthSession
+id, userId, refreshTokenHash, generation, deviceInfo, revokedAt, expiry
+Chỉ một phiên điều khiển hợp lệ/User
+GuestSession
+id, browserSessionKey, createdAt, expiresAt
+Không dùng fingerprint thiết bị; chỉ dữ liệu phiên
+FriendRelation
+id, userA, userB, status, initiatedBy, blockStatus
+Một cặp chuẩn hóa; không quan hệ trùng
+Invitation
+id, type, sender, receiver, roomId?, matchId?, status, expiry
+Chống trùng lời mời cùng loại/cùng phiên
+Room
+id, roomCode, visibility, ownerId, status, config, activeMatchId
+Code duy nhất giữa room chưa CLOSED
+RoomSeat
+roomId, actorId, seat, readyAt, joinedAt
+Mỗi Room tối đa 2 ghế PLAYER
+Match
+id, roomId, redActor, blackActor, state, resultCode, boardFEN, sideToMove, version
+Một terminal outcome; snapshot đáng tin
+Move
+id, matchId, moveNo, actorId, from, to, captured, check, clockAfter
+unique matchId + moveNo / moveId
+MatchClock
+matchId, mode, redRemainingMs, blackRemainingMs, lastStartAt, pausedAt
+Tính theo Server; snapshot đồng bộ
+MatchRequest
+id, matchId, kind, requestedBy, approvedBy, status, version, expiresAt
+Một pending hợp lệ cho mỗi kind/match
+DisconnectWindow
+matchId, actorId, disconnectedAt, deadlineAt, budgetUsedMs
+Không reset bằng reconnect giả
+ChatMessage
+id, matchId, senderId, text, sentAt, deletedAt?
+Giới hạn chat và quyền xem
+AuditLog
+id, actor, action, entityId, beforeAfterSummary, createdAt
+Không lưu tokens/mật khẩu/raw camera
+
+Các bảng và trường là mô hình logic [BA], chưa phải thiết kế migration cứng. Cần chốt khóa ngoại, dữ liệu xóa mềm và chính sách archive trên schema Prisma trước khi bắt đầu lập trình.
+11.2. HTTP API – danh mục hợp đồng chức năng
+Nhóm
+Endpoint minh họa
+Điều kiện và kết quả
+AUTH
+POST /api/auth/register, /login, /refresh, /logout, /forgot-password, /reset-password
+Validate, rate-limit, session singleton
+AUTH
+GET /api/auth/me; POST /api/auth/oauth/google, /oauth/facebook
+OAuth state/PKCE tùy provider, explicit account link
+USER
+GET/PATCH /api/users/me; DELETE /api/users/me
+Profile, avatar, soft-delete
+FRIEND
+GET /api/friends; POST /api/friends/requests; POST /api/friends/requests/:id/respond
+Chỉ User, block check, chống trùng
+ROOM
+POST /api/rooms; GET /api/rooms?visibility=public; POST /api/rooms/:id/join
+Tạo/danh sách/join bằng kiểm tra Server
+ROOM
+POST /api/rooms/join-code; GET /api/rooms/:id; POST /api/rooms/:id/ready
+Mã phòng, snapshot, ready
+MATCH
+GET /api/matches/:id; GET /api/matches/history
+Chỉ người có quyền; có version
+SAVE
+POST /api/matches/:id/save-requests; POST /api/match-requests/:id/respond
+Save/resume/draw/undo idempotent
+SAVE
+GET /api/matches/saved; POST /api/matches/:id/resume-requests
+Đúng cặp kỳ thủ, status SAVED
+REPLAY
+GET /api/matches/:id/replay
+Đọc log theo quyền riêng tư
+ADMIN
+GET /api/admin/reports; PATCH /api/admin/users/:id/status
+RBAC, audit tất cả thay đổi
+
+Các đường dẫn chỉ là contract đề xuất, có thể đổi tên khi thiết kế chi tiết nhưng không thay đổi ngữ nghĩa nghiệp vụ, mã lỗi hoặc giới hạn phân quyền. Chuyển nước đi PvP nên đi qua Socket.IO để nhận ACK/version theo trận. [BA]
+11.3. Socket.IO Event Contract – danh mục
+Event
+Hướng
+Payload tối thiểu / hành vi
+room:join
+C→S
+roomId/code, requestId; ACK authorized room snapshot
+room:ready
+C→S
+roomId, ready, configVersion; Server kiểm tra đồng thuận
+room:state
+S→C
+roomId, seats, status, configVersion, serverTime
+match:move
+C→S
+matchId, moveId, expectedVersion, from, to
+match:move-accepted
+S→C
+matchId, version, state, move, clocks, serverTime
+match:move-rejected
+S→C
+code, expectedVersion, currentVersion, snapshotOption
+match:state
+S→C
+Snapshot khi join/reconnect/transition
+match:request
+C→S
+matchId, type SAVE/DRAW/UNDO/RESUME, requestId
+match:request-updated
+S→C
+requestId, status, expiresAt, matchVersion
+match:ended
+S→C
+result WIN/LOSS/DRAW/CANCELED, reasonCode, finalVersion
+match:disconnect-status
+S→C
+actorId, deadlineAt, pauseStatus, serverTime
+matchmaking:join/cancel
+C→S
+timeControl, requestId; search status
+chat:send/received
+C↔S
+matchId, messageId, content, sentAt
+video:invite/respond
+C↔S
+matchId, requestId, consent; no camera feed in Socket
+video:signal
+C↔S
+matchId, sessionId, SDP/ICE allowed only after consent
+
+Tất cả event C→S phải xác thực actor và current session, schema validate, giới hạn tốc độ, trả ACK có mã lỗi/định danh yêu cầu. Không tin roomId hoặc matchId là bằng chứng sở hữu. Khi Socket bị rớt, snapshot lấy lại từ Server thay vì phát lại một loạt sự kiện có thể trùng. [BA]
+11.4. Quy chuẩn thời gian, phiên bản và lỗi
+Mọi timestamp trao đổi dùng ISO-8601 UTC hoặc epochMs UTC; Frontend hiển thị theo timezone người dùng. [BA]
+Mọi thay đổi trạng thái Match tăng version nguyên; expectedVersion dùng chống stale write, moveId/requestId làm idempotency key. [BA]
+Mã lỗi có danh sách chuẩn: UNAUTHENTICATED, SESSION_REVOKED, FORBIDDEN, ROOM_CLOSED, ROOM_FULL, MATCH_NOT_ACTIVE, NOT_YOUR_TURN, ILLEGAL_MOVE, STALE_VERSION, REQUEST_EXPIRED, CLOCK_EXPIRED, DISCONNECT_TIMEOUT, AI_ASSETS_MISSING, MEDIA_PERMISSION_DENIED. [BA]
+Không dùng Promise ACK của Socket để đại diện commit nếu transaction DB chưa thành công; lỗi commit phải báo thất bại thực. [BA]
+12. YÊU CẦU PHI CHỨC NĂNG, BẢO MẬT VÀ VẬN HÀNH
+Mã
+Yêu cầu
+Cách kiểm chứng
+NFR-01
+Responsive Chrome/Edge/Firefox/Safari hiện đại trên desktop/mobile; thao tác click và chạm.
+Kiểm tra nhiều kích thước; bàn cờ và đồng hồ không bị che.
+NFR-02
+Đúng luật và kết quả là ưu tiên cao hơn tối ưu độ trễ; nguồn sự thật ở Server.
+Bộ test thế cờ + integration Socket concurrency.
+NFR-03
+Mục tiêu đồng bộ nước đi ≤ 200ms p95 trong môi trường mạng thử nghiệm gần Server; không cam kết dưới 100ms trên mọi mạng.
+Đo client-to-server-ACK và broadcast p95, công bố điều kiện đo.
+NFR-04
+Clock Server không thể bị sửa bằng thay đồng hồ Client; sai lệch hiển thị được resync.
+Test giả đổi giờ máy, lag client, reconnect.
+NFR-05
+Mọi phiên mật khẩu/JWT/refresh bảo vệ bằng HTTPS/TLS, hash an toàn, revoke và rate limit.
+Kiểm thử auth và security checklist.
+NFR-06
+Socket/WebRTC signaling phải kiểm tra thành viên trận và đồng thuận video.
+Test gửi sự kiện giả từ user thứ ba; deny.
+NFR-07
+Dữ liệu MATCH/MOVE/SAVE cần transaction; không thể mất nửa giao dịch hoặc nhân bản terminal.
+Test fail DB/Socket, duplicate requests, restart.
+NFR-08
+AI offline chỉ được công bố đã sẵn sàng khi cache đủ asset và kiểm thử chọn nước thành công.
+Tắt Internet, reload website, chơi 10 nước; test trên mobile mục tiêu.
+NFR-09
+WebRTC là thành phần phụ: lỗi mạng/thiết bị chỉ tắt media, không thay đổi kết quả.
+Test từ chối quyền, STUN/TURN fail, mạng yếu.
+NFR-10
+Không có ELO/cược/stream khán giả ở bản đầu.
+Kiểm tra scope guard, UI, API và permission.
+NFR-11
+Có log hệ thống, audit thao tác nhạy cảm; không ghi secrets, OTP, raw media.
+Review log và quy tắc retention.
+NFR-12
+Tăng chất lượng bằng unit, integration và e2e; mỗi Story bắt buộc có acceptance criteria kiểm được.
+Chạy pipeline, đính kèm kết quả khi nghiệm thu.
+
+12.1. Kiến trúc triển khai và lỗi chấp nhận được
+Sử dụng Docker Compose cho PostgreSQL và Backend khi chạy local hoặc VPS; Redis là tùy chọn khi cần scale nhiều instance/room state recovery phức tạp. Không dùng service worker cho API riêng tư; chỉ cache asset tĩnh và gói AI được phiên bản hóa. [BA]
+Nếu triển khai nhiều Backend instance, trạng thái phòng và queue phải có coordination store (Redis adapter hoặc DB locking), Socket sticky sessions/tương đương, pub/sub events có xác nhận. Bản đầu single instance vẫn phải bảo đảm move/save bền vững trong PostgreSQL. [BA]
+Video Call WebRTC thực tế qua NAT có thể cần TURN trả phí/băng thông; mức độ hỗ trợ tùy nền tảng/trình duyệt và phải thử nghiệm với mạng di động. Không cam kết mạng nào cũng P2P trực tiếp được. [BA]
+13. KIỂM THỬ NGHIỆP VỤ VÀ ACCEPTANCE SCENARIOS
+Các tình huống sau là tối thiểu cho QA. Mỗi test phải chỉ rõ Given (trạng thái ban đầu), When (hành động), Then (kết quả và dữ liệu quan sát được); test cạnh tranh phải chạy bằng hai trình duyệt và đánh giá state phía Server, không chỉ UI. [BA]
+13.1. Danh mục test case tối thiểu
+ID / Nhóm
+Given – When
+Then (điều kiện đạt)
+TC-001AUTH
+Đăng ký thành công với username, email và password hợp lệ
+Tạo đúng một User, không gửi OTP, cấp một phiên
+TC-002AUTH
+Đăng ký username đã tồn tại khác hoa/thường
+Từ chối, không tạo User khác trùng canonical username
+TC-003AUTH
+Đăng ký email đã tồn tại
+Từ chối, không tạo tài khoản mới
+TC-004AUTH
+Đăng nhập bằng username hoặc email
+Cùng một accountId, một phiên hợp lệ
+TC-005AUTH
+Đăng nhập thiết bị B khi A đang đăng nhập
+Phiên A bị revoke, phiên B là duy nhất
+TC-006AUTH
+Hai tab A/B cùng gửi move của một User
+Chỉ current session/control token mới được ghi nước
+TC-007AUTH
+Access token hết hạn khi đang chơi
+Tự refresh hoặc yêu cầu đăng nhập lại an toàn, không nhân đôi nước
+TC-008AUTH
+Reset password bằng token đã dùng
+Bị từ chối; password không bị đổi lần thứ hai
+TC-009AUTH
+Reset email chưa tồn tại
+Thông báo trung tính, không lộ sự tồn tại email
+TC-010AUTH
+Guest đổi sang User và chọn gộp phiên
+Không ghi đè dữ liệu User sẵn có, giữ dữ liệu được phép
+TC-011AUTH
+Người dùng soft-delete khi còn saved match
+Revoke phiên, khóa resume, quyền bên còn lại không bị chuyển thành thắng
+TC-012PROFILE
+Đổi tên hiển thị lần hai trong 7 ngày
+Từ chối; vẫn được trùng tên người khác
+TC-013FRIEND
+Hai người gửi lời mời kết bạn chéo
+Tự chuyển quan hệ ACCEPTED duy nhất
+TC-014FRIEND
+B từ chối, A gửi lại ngay
+Có thể gửi lại nếu chưa bị chặn/không vượt giới hạn chống spam
+TC-015FRIEND
+A chặn B khi B gửi lời mời chơi/chat/video
+Các tương tác trực tiếp bị từ chối
+TC-016ROOM
+Hai Client join vào một phòng chỉ còn một ghế
+Chỉ một join commit, không có 3 kỳ thủ
+TC-017ROOM
+Tạo room Public/Private
+Public xuất hiện danh sách, Private không xuất hiện
+TC-018ROOM
+Nhập mã 6 số sai/hết hiệu lực
+Hiện lỗi thích hợp, không gia nhập nhầm phòng
+TC-019ROOM
+Nhấp URL mời khi Guest
+Được chọn Guest hoặc đăng nhập rồi chuyển vào phòng hợp lệ
+TC-020ROOM
+Chủ/khách rời phòng khi countdown
+Đếm ngược hủy, không ghi kết quả thua
+TC-021ROOM
+Một người đổi time control sau người khác READY
+Ready cả hai reset, không tự bắt đầu với cấu hình cũ
+TC-022ROOM
+Hai người chơi cùng tài khoản cố chiếm hai ghế
+Từ chối đối thủ trùng actor/định danh
+TC-023MATCH
+Tìm trận ngẫu nhiên cùng time control
+Ghép hai người khác nhau, không tính ELO
+TC-024MATCH
+Hủy tìm trận trước khi ghép
+Thoát queue; không bị ghép về sau
+TC-025MATCH
+Cấm phòng vì block hai chiều
+Không ghép; không hiển thị dữ liệu không được phép
+TC-026RULE
+Mã bị cản chân, Tượng bị chặn mắt
+Từ chối các nước vi phạm luật
+TC-027RULE
+Pháo ăn qua 0/2 ngòi
+Không hợp lệ; đúng 1 ngòi mới hợp lệ
+TC-028RULE
+Tốt trước sông đi ngang
+Từ chối; sau sông đi ngang hợp lệ nếu không vi phạm khác
+TC-029RULE
+Hai Tướng lộ mặt sau một nước đi
+Từ chối và giữ nguyên lượt
+TC-030RULE
+Nước tự để Tướng bị chiếu
+Từ chối và trả snapshot không đổi
+TC-031RULE
+Chiếu bí và hết nước hợp lệ
+Bên không còn nước hợp lệ thua, reasonCode phân biệt
+TC-032RULE
+Cố đi nước tiếp tục trường chiếu bị cấm
+Từ chối, yêu cầu đổi nước; nếu hết nước thua
+TC-033RULE
+Lặp vị trí không thuộc trường chiếu bị cấm
+Không tự hòa 60 nước; áp đúng bộ quy tắc đã thiết kế
+TC-034TIME
+Chọn không giới hạn, đi nhiều lượt
+Không phát sự kiện hết giờ
+TC-035TIME
+Chọn 5/10/15/30 và người chơi hết giờ
+Thua đúng người hết giờ, chỉ một result
+TC-036TIME
+Client thay đổi đồng hồ máy
+Không làm thay đổi clock authoritative
+TC-037TIME
+Nước sai luật khi đang đến lượt
+Không chuyển lượt, đồng hồ vẫn chạy
+TC-038CONN
+A rớt mạng, quay lại trong 60 giây
+Resume chính xác board/clock và thời gian đã đóng băng
+TC-039CONN
+A rớt >60s, B vẫn online
+A thua do disconnect, B thắng
+TC-040CONN
+A rớt t0, B rớt t20, cả hai không quay lại
+Đến khi cả hai quá deadline: CANCELED, lưu biên bản, không DRAW
+TC-041CONN
+A rớt t0, B rớt t20, B trở lại trước t80 khi A quá hạn
+B thắng, không hủy ván
+TC-042CONN
+Người chơi reconnect nhiều lần cố cộng thời gian
+Không reset deadline/budget theo refresh
+TC-043CONN
+Đăng nhập thiết bị mới trước deadline
+Phiên cũ bị thu hồi; thiết bị mới được snapshot
+TC-044CONN
+Server restart giữa trận khi state bền vững
+Không có nước đi mất/nhân đôi; xử lý clock an toàn
+TC-045SAVE
+A yêu cầu lưu, B từ chối
+Trận ACTIVE bình thường, không có SAVED
+TC-046SAVE
+A yêu cầu lưu, B chấp nhận
+Chỉ một snapshot SAVED chính xác hai User gốc
+TC-047SAVE
+Hai người cùng gửi SAVE gần như đồng thời
+Chỉ một yêu cầu hiệu lực và một transaction save
+TC-048SAVE
+A xin lưu khi đang có người Guest
+Không lưu dài hạn khi chưa đủ hai User
+TC-049SAVE
+Một nước đi được ghi trong lúc SAVE chờ xác nhận
+Snapshot theo thứ tự commit, stale confirmation yêu cầu xác minh lại
+TC-050SAVE
+Chiếu bí/đầu hàng commit ngay trước SAVE
+FINISHED giữ hiệu lực; SAVE bị từ chối
+TC-051SAVE
+DB rollback trong lúc SAVE
+Không hiển thị lưu thành công; Match nhất quán
+TC-052RESUME
+B offline khi A mời tiếp tục
+Request + notification còn lưu, Match vẫn SAVED
+TC-053RESUME
+B từ chối tiếp tục
+Match vẫn SAVED, không sinh ACTIVE mới
+TC-054RESUME
+Hai người READY để resume đúng saved match
+Đúng màu/board/clock/lượt, không tạo trận nhân đôi
+TC-055RESUME
+User khác dò matchId muốn resume
+Từ chối 403, không lộ snapshot
+TC-056DRAW
+Xin hòa không được đồng ý
+Không kết thúc hòa
+TC-057DRAW
+Hai bên đồng ý xin hòa
+FINISHED/DRAW đúng một lần
+TC-058UNDO
+Hai bên đồng ý Undo
+Khôi phục board/timers/history đồng nhất
+TC-059VIDEO
+B từ chối lời mời Video Call
+Không mở camera/mic, PvP vẫn hoạt động
+TC-060VIDEO
+Một bên cấp quyền camera, bên kia chưa đồng ý
+Chưa thực hiện luồng video hai phía
+TC-061VIDEO
+WebRTC lỗi kết nối hoặc mạng yếu
+Trận chơi vẫn tiếp tục; media fallback/đóng an toàn
+TC-062VIDEO
+Match SAVED hoặc FINISHED
+Media tracks đóng và không ghi âm/hình
+TC-063CHAT
+Người thứ ba giả mạo chat matchId
+Bị từ chối và ghi audit cần thiết
+TC-064AI
+Tải xong AI, tắt mạng rồi refresh
+Mở được chức năng AI khi cache còn và Worker chạy được
+TC-065AI
+Dữ liệu AI thiếu khi offline
+Thông báo thiếu asset, không âm thầm gọi server
+TC-066AI
+Undo khi Worker đang suy nghĩ
+Hủy request AI cũ, không xuất hiện nước đi cũ sau hoàn tác
+TC-067AI
+User chơi offline rồi khôi phục ván
+Snapshot hợp lệ được mở lại; không làm mất nước đã commit
+TC-068AI
+Guest hết phiên/clear session data
+Không khẳng định dữ liệu Guest được lưu dài hạn
+TC-069HISTORY
+Một ván bị hủy vì hai bên offline
+Lịch sử có reason CANCELED, không tính W/L/D
+TC-070HISTORY
+Replay qua từng nước và sau Undo
+Chỉ phát nước hiệu lực, không thay đổi Match gốc
+TC-071PRIVACY
+Người dùng ẩn lịch sử cá nhân
+Người lạ không thấy, kỳ thủ cùng ván vẫn xem theo quyền
+
+13.2. Những bộ kiểm thử cần dùng fixtures và fault-injection
+Thế cờ luật: bộ fixtures cho 7 quân, lộ mặt Tướng, tự chiếu, chiếu bí, stalemate, chu kỳ trường chiếu và đường vòng qua các quân chắn.
+Thời gian: fake clock phía Backend để tái hiện hết giờ và disconnect staggered chính xác, không phụ thuộc sleep ngẫu nhiên.
+Cạnh tranh: cùng moveId; hai Socket của hai thiết bị; hai người join một ghế; hai SAVE_ACCEPT cùng lúc; chuyển phiên khi ACK đang pending.
+Lỗi dữ liệu: tắt PostgreSQL giữa transaction SAVE; restart process; Socket ACK mất nhưng DB commit; retry duplicate.
+Video: từ chối permission, STUN/TURN không khả dụng, tab background, mạng yếu; tuyệt đối không thay đổi kết quả PvP.
+Offline: cache sau lần tải trước, tắt network trong DevTools/thiết bị, reload URL trực tiếp, xóa cache và quan sát thông báo fallback.
+14. PRODUCT BACKLOG THEO THỨ TỰ ƯU TIÊN VÀ ĐIỀU KIỆN BÀN GIAO
+Các Story dưới đây là backlog đề xuất mới, dùng để đồng bộ với OCC sau khi duyệt. Không giả định có thể tự sửa Jira hoặc rằng các issue ID hiện tại trùng mã ở đây. [BA]
+Ưu tiên
+Epic / Story
+Mục tiêu & truy vết
+P1
+EP-AUTH / US-A01
+Đăng ký, email/username đăng nhập, một phiênAUTH-01..04; TC-001..007
+P1
+EP-AUTH / US-A02
+Quên/đổi mật khẩu, Google/FacebookAUTH-05..07; TC-008..009
+P1
+EP-AUTH / US-A03
+Guest, chuyển Guest, hồ sơ, avatar, soft-deleteAUTH-08..11; TC-010..012
+P1
+EP-FRIEND / US-F01
+Tìm, gửi, hủy và duyệt kết bạn, chặnFRIEND-01..05; TC-013..015
+P2
+EP-ROOM / US-R01
+Tạo phòng Public/Private, danh sách và cấu hìnhROOM-01..03; TC-016..022
+P2
+EP-ROOM / US-R02
+Join, quyền chủ phòng, sẵn sàng và bắt đầuROOM-04..09; TC-016..022
+P3
+EP-INVITE / US-I01
+Mã phòng, link HTTPS, QR, share MXHROOM-04..05; TC-018..019
+P3
+EP-INVITE / US-I02
+Lời mời bạn bè trong game, thông báoFRIEND-05; UC-R02
+P4
+EP-CORE / US-C01
+Render bàn cờ, bộ luật cờ, FEN, move logRULE-01..07; TC-026..033
+P4
+EP-SAVE / US-S01
+Yêu cầu lưu PvP có đồng thuận, snapshot DBSAVE-01..08; TC-045..051
+P4
+EP-SAVE / US-S02
+Danh sách và yêu cầu tiếp tục ván đã lưuRESUME-01..08; TC-052..055
+P5
+EP-PVP / US-P01
+Socket authoritative move và versionUC-G01; TC-026..033
+P5
+EP-PVP / US-P02
+Đồng hồ cấu hình và phân xử kết quảTIME-01..07; RESULT-01..05
+P5
+EP-PVP / US-P03
+Reconnect, chuyển thiết bị và hai bên offlineCONN-01..08; TC-038..044
+P5
+EP-MATCH / US-M01
+Ghép ngẫu nhiên không ELOUC-R03; TC-023..025
+P6
+EP-CHAT / US-H01
+Chat văn bản giữa hai kỳ thủCHAT-01..05; TC-063
+P6
+EP-VIDEO / US-V01
+WebRTC video/voice, consent, fallbackVIDEO-01..07; TC-059..062
+P7
+EP-AI / US-AI01
+AI offline-ready, cache, worker, ba độ khóAI-01..09; TC-064..068
+P7
+EP-AI / US-AI02
+Local auto-save, undo, hint và recoveryAI-04..07; TC-065..068
+P5–P7
+EP-HISTORY / US-HS01
+Kỳ phổ, replay, history resultUC-G01, HISTORY; TC-069..070
+P5–P7
+EP-ADMIN / US-AD01
+Quản trị tối thiểu, chặn và auditMục 10.2, NFR-11
+
+14.1. Điều kiện hoàn thành của từng gói bàn giao
+P1: Đăng ký/đăng nhập, profile, Guest, một phiên hoạt động và xử lý các lỗi xác thực; unit/integration auth đạt.
+P2: Có thể tạo phòng Public/Private, xem danh sách phòng, hai người đúng quyền READY; không vượt hai ghế.
+P3: Người dùng mở URL/mã/QR từ bên ngoài vào đúng phòng còn hiệu lực, kể cả luồng chưa đăng nhập.
+P4: Có engine luật cờ đủ để kiểm chứng bàn cờ và transaction lưu/khôi phục chính xác ván với hai tài khoản User.
+P5: Hai trình duyệt chơi PvP đúng luật, clock Server, matchmaking, reconnect và kết quả đúng/không nhân đôi.
+P6: Chat và cuộc gọi WebRTC hai kỳ thủ hoạt động khi đồng ý; mọi lỗi media không làm hỏng ván.
+P7: Trên máy tính và trình duyệt di động mục tiêu, AI chạy được khi ngắt Internet sau khi tải trước; ba mức và local save đã kiểm thử.
+15. QUẢN LÝ MÂU THUẪN VỚI ĐẶC TẢ v2.0
+Điểm v2.0
+Quyết định ở v3.0
+Nguồn ưu tiên
+Có 5 Phase, nhiều chức năng nâng cao từ sớm
+Bám 7 ưu tiên trải nghiệm: auth → phòng → mời → lưu → PvP → chat/video → AI
+XN
+Khán giả, ELO và matchmaking theo ELO
+Hoãn khán giả/ELO; giữ matchmaking ngẫu nhiên không ELO
+XN
+Video có thể tự bật tại phòng mời bạn
+Không tự bật; chỉ truyền khi hai bên đồng ý và quyền thiết bị cho phép
+XN
+AI 3–4 mức, đôi chỗ có Kỳ Vương
+Giữ chính xác ba mức Dễ / Trung bình / Khó
+XN
+Nhiều mức clock/Byo-yomi, giờ mỗi nước
+Chỉ không giới hạn hoặc tổng mỗi bên 5/10/15/30 phút
+XN
+60 nước không ăn quân hoặc hòa vô tử
+Không tự hòa vì thiếu quân hay 60 nước ở bản đầu
+XN
+Chống trường chiếu mô tả đơn giản >3 lần
+Chặn nước tiếp tục chu kỳ trường chiếu bị cấm, buộc đổi nước
+XN/BA
+Cả hai mất kết nối không được định nghĩa
+Hai phía quá hạn → CANCELED, không DRAW/WIN, lưu kỳ phổ
+XN
+Chỉ Replay sau ván và local AI autosave
+Bổ sung quy trình lưu PvP và đồng ý tiếp tục ván đúng hai kỳ thủ
+XN
+Mã phòng 6 số hoặc 6 chữ/số
+Chuẩn hóa đề xuất mã 6 chữ số cho bản đầu; URL/QR cùng id
+BA
+Firebase Dynamic Links và Universal/App Links native
+Website HTTPS bình thường + QR URL, không phụ thuộc dịch vụ deep link native
+XN/BA
+Latency <100ms có tính cam kết
+NFR đặt mục tiêu thực nghiệm, không cam kết mọi mạng; đo trên môi trường xác định
+BA
+Chế độ Guest qua deviceId thiết bị
+Dùng định danh Guest theo phiên không fingerprint phần cứng
+BA
+
+15.1. Những mục không được âm thầm “nâng cấp”
+Không tự thêm cược, tiền ảo, ELO và khán giả vào bản đầu.
+Không thay engine AI offline bằng API server-only mà vẫn gọi là offline.
+Không coi link phòng Private là quyền bật camera tự động.
+Không tự chuyển Match CANCELED thành DRAW trong thống kê.
+Không tự lưu PvP dài hạn của Guest hoặc tự tiếp tục SAVED khi đối phương chưa đồng ý.
+Không thay bộ luật trường chiếu/hòa đang chốt bằng luật Cờ Vua hoặc suy luận từ game khác.
+Không thay đổi ràng buộc một phiên điều khiển hợp lệ/User và cơ chế chuyển thiết bị.
+16. SỔ QUYẾT ĐỊNH NGHIỆP VỤ VÀ PHẦN CẦN KIỂM CHỨNG
+16.1. Quyết định chủ dự án đã xác nhận
+ID
+Quyết định đã xác nhận
+XN-01
+Web only, responsive desktop/mobile; giữ stack React/Vite/TS, Node/Express/Socket.IO, PostgreSQL/Prisma.
+XN-02
+Ưu tiên theo 7 hạng mục trong ảnh; làm chính trước, mở rộng sau; mức độ kiến trúc vừa đủ.
+XN-03
+ELO và khán giả đưa vào giai đoạn sau, không phải bản đầu; không có cược.
+XN-04
+Guest chơi PvP/AI; không kết bạn, không lưu PvP dài hạn; giữ dữ liệu phiên theo chính sách.
+XN-05
+Đăng ký bắt buộc email; đăng nhập email/username + mật khẩu; không OTP đăng ký; Google/Facebook.
+XN-06
+Một tài khoản một phiên đăng nhập điều khiển, có thể chuyển ván sang thiết bị mới.
+XN-07
+Đổi display name tối đa mỗi 7 ngày; trùng tên có mã công khai; avatar tải hoặc mặc định; lịch sử có thể ẩn.
+XN-08
+Bạn bè gửi/chấp nhận/từ chối/hủy/block; yêu cầu chéo tự kết bạn; bị từ chối được gửi lại ngay.
+XN-09
+Public/Private + danh sách phòng; ghép ngẫu nhiên không ELO; URL/mã mời trong game/MXH.
+XN-10
+Lưu PvP khi cả hai đồng ý; đúng hai User gốc đồng ý mới tiếp tục; A có thể mời B offline.
+XN-11
+Đồng hồ không giới hạn hoặc tổng 5/10/15/30 phút, hai phía xác nhận; khi rớt mạng dừng cả trận.
+XN-12
+Reconnect 60 giây; đối thủ online thắng nếu bên kia quá hạn; cả hai offline quá hạn thì CANCELED, lưu biên bản.
+XN-13
+Chống trường chiếu: chặn nước tiếp tục chu kỳ bị cấm và buộc đổi nước; hết nước xử thua.
+XN-14
+Bản đầu không tự hòa vì 60 nước hoặc thiếu quân; hòa theo đồng thuận hai người.
+XN-15
+Video Call là chức năng phải có nhưng sử dụng tùy chọn; chỉ truyền camera/mic khi hai phía đồng ý.
+XN-16
+AI chơi được không Internet trên trình duyệt sau chuẩn bị tài nguyên; ba độ khó, tự lưu/khôi phục.
+
+16.2. Các thông số/giải pháp do BA tự đề xuất để khép kín
+ID
+Đề xuất và lý do
+Tác động / nơi kiểm chứng
+BA-01
+Mã phòng 6 chữ số, duy nhất lúc hoạt động; mã/link không mang token đăng nhập.
+Test phòng và URL mời
+BA-02
+Đồng hồ chạy trong khi yêu cầu lưu chờ phản hồi; deadline đề xuất 30s, rate limit.
+Chống câu giờ và save race
+BA-03
+Mỗi lần disconnect tối đa 60s, mỗi người budget pause tổng đề xuất 180s/ván.
+Test lạm dụng reconnect
+BA-04
+Clock chỉ được đọc/ghi authoritative ở Server; không dùng timestamp Client phân xử.
+Test timeout/lag
+BA-05
+Chỉ cho một phòng PvP hoạt động/actor; Match có version và idempotency ID.
+Test hai tab/ghế trùng
+BA-06
+Chat văn bản/emoji cơ bản, rate limit và tắt hiển thị; chưa có lịch sử tin nhắn dài hạn riêng.
+Kiểm thử privacy và UI
+BA-07
+WebRTC STUN/TURN, media OFF mặc định, không ghi âm/ghi hình.
+Test browser permissions
+BA-08
+AI offline-ready bằng cache + Worker, IndexedDB cho User; Guest chỉ dữ liệu phiên.
+Offline test trên mobile
+BA-09
+Nhà cung cấp OAuth phải được liên kết có kiểm chứng; không auto merge dựa trên email trùng.
+Test takeover/account collision
+BA-10
+Hồ sơ soft-deleted được ẩn danh ở biên bản cùng tham gia; không xóa cứng dữ liệu dùng chung.
+Security/privacy review
+BA-11
+Hủy ván khi Server lỗi không thể khôi phục an toàn, không tự xử thua.
+Disaster-recovery tests
+
+16.3. Kiểm chứng bắt buộc khi triển khai, không phải câu hỏi cần khảo sát tiếp
+Kiểm thử và tài liệu hóa chính xác chu kỳ trường chiếu được cấm bằng tập thế cờ độc lập; yêu cầu chốt fixtures trước khi coi engine đúng luật.
+Benchmark engine AI WASM/JS và mô hình giấy phép với thiết bị desktop/mobile dự kiến; nếu không đáp ứng, đổi engine mà giữ nguyên trải nghiệm offline/3 mức.
+Đánh giá hành vi cache offline của PWA khi trình duyệt xóa dữ liệu/tắt chế độ lưu hoặc dùng tab riêng tư; UI phải thông báo trung thực.
+Kiểm tra chính sách retention/dữ liệu riêng tư cho email, avatar, chat, báo cáo người dùng và bản ghi soft-delete phù hợp môi trường triển khai.
+Đo p95 latency và độ chính xác đồng hồ trong bối cảnh mạng thật; sửa chỉ tiêu NFR khi có số đo.
+Đối chiếu các Story hiện có trên Jira OCC trước khi import/update backlog mới để tránh tạo issue trùng hoặc xóa mô tả gốc.
+Kết luận phân tích: Với các quyết định hiện có, không còn câu hỏi bắt buộc phải gửi chủ dự án trước khi viết bản đặc tả này. Những điểm chưa có số liệu thực nghiệm đã được ghi [BA] hoặc thành hạng mục kiểm chứng, không trình bày như sự thật đã được chứng minh.
+PHỤ LỤC A. THUẬT NGỮ
+Thuật ngữ
+Giải nghĩa
+Room
+Không gian tập hợp người chơi; có thể tạo nhiều ván theo thời gian.
+Match
+Một ván cờ cụ thể, có ID và kết quả/trạng thái riêng.
+Actor
+Guest session hoặc User đang tương tác; cần kiểm tra current session.
+Authoritative Server
+Máy chủ là nguồn quyết định luật, lượt, kết quả, đồng hồ PvP.
+Snapshot
+Trạng thái đầy đủ có phiên bản để khôi phục Match.
+Kỳ phổ / Replay
+Dữ liệu và giao diện phát lại các nước đã xảy ra.
+Stalemate Xiangqi
+Không có nước hợp lệ dù không bị chiếu; bên đó thua.
+Trường chiếu
+Chu kỳ lặp các nước chiếu bị bộ quy tắc đã chọn cấm.
+Idempotency
+Yêu cầu gửi lại không tạo ra tác dụng phụ trùng lặp.
+Soft-delete
+Đánh dấu tài khoản ngừng hoạt động, có chính sách giữ dữ liệu liên quan.
+PWA/Offline-ready
+Tài nguyên website và engine đã cache đầy đủ để chạy những chức năng cho phép khi offline.
+WebRTC/TURN
+Công nghệ kết nối âm thanh/hình ảnh; TURN chuyển tiếp khi P2P trực tiếp không khả thi.
+
+PHỤ LỤC B. THAM CHIẾU NGUỒN VÀ PHẠM VI TÀI LIỆU
+Nguồn 1: “Đặc tả yêu cầu nghiệp vụ & Product Backlog – Dự án Hệ thống Game Cờ Tướng (Chinese Chess Online, AI Offline & Real-time Video Call)”, phiên bản v2.0, 14 trang; các phần: Tổng quan, Phases 1–5, Epic/User Story, NFR. Những điều bị thay đổi được liệt kê ở mục 15.
+Nguồn 2: Các quyết định người yêu cầu trong hội thoại rà soát đặc tả, bao gồm 31 câu đầu; C01–C10; Q01–Q13; và ảnh thứ tự ưu tiên triển khai 7 hạng mục. Những quyết định đó được đánh dấu [XN].
+Nguồn 3: Quy tắc bổ sung [BA] do phân tích vòng đời nghiệp vụ, khả năng cạnh tranh dữ liệu và an toàn Web thực hiện. Các đề xuất này không được nhầm với lời xác nhận trực tiếp của người yêu cầu.
+Đây là đặc tả nghiệp vụ và yêu cầu ở mức triển khai. Nó chưa bao gồm mã nguồn, ERD vật lý, migration Prisma thực tế, cấu hình WebRTC/TURN chi tiết, cấu hình PWA hoặc kết quả kiểm thử chạy thật. Các đầu ra đó thuộc kế hoạch thiết kế/triển khai tiếp theo.

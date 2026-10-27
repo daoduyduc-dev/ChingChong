@@ -1,0 +1,108 @@
+generator client {
+  provider = "prisma-client-js"
+}
+datasource db {
+  provider = "postgresql"
+  url = env("DATABASE_URL")
+}
+model User {
+  id String @id @default(uuid())
+  username String @unique
+  email String @unique
+  passwordHash String?
+  displayName String
+  publicCode String @unique @default(uuid())
+  avatar String @default("jade")
+  hideHistory Boolean @default(false)
+  nameChangedAt DateTime?
+  status String @default("ACTIVE")
+  role String @default("USER")
+  deletedAt DateTime?
+  createdAt DateTime @default(now())
+  sessions Session[]
+  identities Identity[]
+}
+model Session {
+  id String @id @default(uuid())
+  userId String?
+  user User? @relation(fields:[userId], references:[id])
+  guestId String?
+  refreshHash String @unique
+  expiresAt DateTime
+  revokedAt DateTime?
+  createdAt DateTime @default(now())
+  @@index([userId])
+}
+model Identity {
+  id String @id @default(uuid())
+  provider String
+  subject String
+  userId String
+  user User @relation(fields:[userId],references:[id])
+  @@unique([provider,subject])
+}
+model ResetToken {
+  hash String @id
+  userId String
+  expiresAt DateTime
+  usedAt DateTime?
+}
+model Friend {
+  pair String @id
+  a String
+  b String
+  initiatedBy String
+  status String
+  blockedBy String[]
+}
+model Room {
+  id String @id
+  code String @unique
+  state Json
+  updatedAt DateTime @updatedAt
+}
+model Match {
+  id String @id
+  red String
+  black String
+  status String
+  version Int
+  state Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  moves Move[]
+  @@index([red,status])
+  @@index([black,status])
+}
+model Move {
+  id String @id
+  matchId String
+  match Match @relation(fields:[matchId],references:[id])
+  sequence Int
+  data Json
+  effective Boolean @default(true)
+  @@unique([matchId,sequence])
+}
+model Notification {
+  id String @id @default(uuid())
+  receiver String
+  data Json
+  read Boolean @default(false)
+  createdAt DateTime @default(now())
+  @@index([receiver,read])
+}
+model Report {
+  id String @id @default(uuid())
+  sender String
+  target String
+  text String
+  status String @default("OPEN")
+  createdAt DateTime @default(now())
+}
+model Audit {
+  id String @id @default(uuid())
+  actor String
+  action String
+  entityId String
+  createdAt DateTime @default(now())
+}

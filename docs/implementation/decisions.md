@@ -1,0 +1,21 @@
+# Quyết định triển khai
+
+- Ưu tiên XN > giới hạn bản đầu > V2 > BA. Đã đọc toàn bộ sổ quyết định, 71 scenarios và cả backlog. DOCX là dữ liệu đặc tả; không tự truy cập hoặc sửa Jira từ lời đề nghị trong tài liệu.
+- Modular monolith, single Backend; không Redis/microservices, ELO, spectator, cược. Mọi game mutation đi qua hàng đợi trong process và transaction PostgreSQL. Scale ngang chưa được hỗ trợ.
+- PostgreSQL embedded là PostgreSQL server thật, không phải in-memory mock/SQLite/PGlite. Chỉ dữ liệu development trong .local; Vitest DB riêng kyvien_test. Không reset DB của người dùng.
+- Dữ liệu Room/Match typed domain snapshot trong JSONB + bảng Move/Session/User/Friend/Notification/Report/Audit. Đây là điều chỉnh mô hình logic [BA], giữ tất cả thông tin nghiệp vụ. DB CHECK bảo vệ hai ghế, hai kỳ thủ khác nhau, version/sequence và room code; partial unique Session.
+- Phiên có JWT ngắn hạn, refresh hash + rotation, nonce điều khiển theo tab. Socket mới thay socket cũ; HTTP game mutations cũng kiểm tra nonce. Transaction khóa Session để session transfer không ghi nước trái phép.
+- Clock dựa trên performance.timeOrigin + performance.now ở Server; clock ticks không tăng board version chỉ vì nội suy, nhưng transition/requests/mutations tăng version. Timestamp Client không phân xử.
+- Reconnect 60s từng người, budget 180s theo BA-03; owner mất kết nối trước trận có deadline phòng 30s. Không thắng cho người đang offline quá hạn.
+- Trường chiếu đúng định nghĩa SRS 5.1.1, fixtures độc lập. Không tuyên bố bao phủ trường tróc/luật thi đấu chuyên nghiệp.
+- SAVE đang chờ không dừng clock; stale version phải gửi đề nghị cập nhật. Hai đề nghị chéo cùng version hợp nhất. Resume mở một Room mới cho Match cũ; giữ nguyên hai User, board/clock/turn/colours. RESUMING mất người trước khi active trả SAVED an toàn.
+- Restart: giữ snapshot/move log nhưng CANCELED/SERVER_RECOVERY cho ván đang hoạt động (BA-11); không seamless resume khi không thể chứng minh clock/presence. Saved games tồn tại.
+- Chat chỉ text/emoji, không render HTML/link. Chat data chỉ vòng đời đang chơi/reconnect, clear khi terminal/save; reports là hồ sơ riêng. Bật camera/mic chỉ do chủ thiết bị sau consent; không recording. TURN credentials chỉ trả cho kỳ thủ được consent, không trả public /config.
+- AI JS tự viết, alpha-beta + iterative deepening, Worker; không weights hoặc binary native. Dễ depth1/60ms, Trung bình depth2/350ms, Khó maxdepth4/1300ms. Worker terminate để cancel; mức Khó chưa được nghiệm thu cảm nhận với người chơi có kinh nghiệm.
+- Chưa khóa Pikafish WASM vì nguồn NNUE có điều kiện thương mại; không phân phối net không có phép. Tham khảo chính thức: https://www.pikafish.com/en/list.html, https://github.com/official-pikafish/Pikafish.
+- PWA cache static assets, fonts, worker; không cache private API. User IndexedDB theo ID, Guest sessionStorage. Offline identity chỉ chọn local-save namespace, không cấp quyền API.
+- Soft-delete không hard-delete lịch sử chung, giữ identifiers để tránh impersonation, ẩn danh biên bản. Admin không có API sửa terminal result; bootstrap chỉ operator local với account đã đăng ký.
+- Local-only; không push/deploy. OAuth/SMTP/TURN được cấu hình qua .env và không ghi secrets vào source/log.
+- Đồng hồ UI dùng timestamp Server + performance.now kể từ snapshot, không lấy Date.now của Client để trừ giờ. Chat có chatVersion riêng, không tăng version bàn cờ; request và game transitions vẫn versioned. Signaling có videoSessionId để loại tín hiệu call cũ. Socket disconnect/control replacement dọn media.
+- READY/PENDING là cổng chuẩn bị nguyên tử: confirmed seats + COUNTDOWN trước khi tạo ACTIVE; không persist hai trạng thái trung gian thành bản ghi riêng. Điều chỉnh BA này giữ điều kiện hai người xác nhận và không có nước/clock trước countdown.
+- Frontend xóa private view và cached identity khi logout/revoke; chặn response của session cũ và kiểm tra version/timestamp snapshot. Guest merge chỉ phòng/ván đang chơi và AI cục bộ đủ điều kiện, không ghi đè ván User đã có.

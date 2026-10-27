@@ -1,0 +1,646 @@
+{
+  "date": "2026-10-16",
+  "status": "PARTIALLY COMPLETE",
+  "scenarios": [
+    {
+      "id": "TC-001",
+      "group": "AUTH",
+      "givenWhen": "Đăng ký thành công với username, email và password hợp lệ",
+      "then": "Tạo đúng một User, không gửi OTP, cấp một phiên",
+      "files": "tests/auth.test.ts",
+      "status": "PASS",
+      "scope": "Local automated evidence"
+    },
+    {
+      "id": "TC-002",
+      "group": "AUTH",
+      "givenWhen": "Đăng ký username đã tồn tại khác hoa/thường",
+      "then": "Từ chối, không tạo User khác trùng canonical username",
+      "files": "tests/auth.test.ts",
+      "status": "PASS",
+      "scope": "Local automated evidence"
+    },
+    {
+      "id": "TC-003",
+      "group": "AUTH",
+      "givenWhen": "Đăng ký email đã tồn tại",
+      "then": "Từ chối, không tạo tài khoản mới",
+      "files": "tests/auth.test.ts",
+      "status": "PASS",
+      "scope": "Local automated evidence"
+    },
+    {
+      "id": "TC-004",
+      "group": "AUTH",
+      "givenWhen": "Đăng nhập bằng username hoặc email",
+      "then": "Cùng một accountId, một phiên hợp lệ",
+      "files": "tests/auth.test.ts",
+      "status": "PASS",
+      "scope": "Local automated evidence"
+    },
+    {
+      "id": "TC-005",
+      "group": "AUTH",
+      "givenWhen": "Đăng nhập thiết bị B khi A đang đăng nhập",
+      "then": "Phiên A bị revoke, phiên B là duy nhất",
+      "files": "tests/auth.test.ts",
+      "status": "PASS",
+      "scope": "Local automated evidence"
+    },
+    {
+      "id": "TC-006",
+      "group": "AUTH",
+      "givenWhen": "Hai tab A/B cùng gửi move của một User",
+      "then": "Chỉ current session/control token mới được ghi nước",
+      "files": "tests/auth.test.ts; tests/socket.test.ts",
+      "status": "PASS",
+      "scope": "Local automated evidence"
+    },
+    {
+      "id": "TC-007",
+      "group": "AUTH",
+      "givenWhen": "Access token hết hạn khi đang chơi",
+      "then": "Tự refresh hoặc yêu cầu đăng nhập lại an toàn, không nhân đôi nước",
+      "files": "tests/auth.test.ts",
+      "status": "PASS",
+      "scope": "Local automated evidence"
+    },
+    {
+      "id": "TC-008",
+      "group": "AUTH",
+      "givenWhen": "Reset password bằng token đã dùng",
+      "then": "Bị từ chối; password không bị đổi lần thứ hai",
+      "files": "tests/auth.test.ts",
+      "status": "PASS",
+      "scope": "Local automated evidence"
+    },
+    {
+      "id": "TC-009",
+      "group": "AUTH",
+      "givenWhen": "Reset email chưa tồn tại",
+      "then": "Thông báo trung tính, không lộ sự tồn tại email",
+      "files": "tests/auth.test.ts",
+      "status": "BLOCKED",
+      "scope": "SMTP chưa cấu hình; mailbox chưa kiểm chứng"
+    },
+    {
+      "id": "TC-010",
+      "group": "AUTH",
+      "givenWhen": "Guest đổi sang User và chọn gộp phiên",
+      "then": "Không ghi đè dữ liệu User sẵn có, giữ dữ liệu được phép",
+      "files": "tests/auth.test.ts",
+      "status": "PASS",
+      "scope": "Local automated evidence"
+    },
+    {
+      "id": "TC-011",
+      "group": "AUTH",
+      "givenWhen": "Người dùng soft-delete khi còn saved match",
+      "then": "Revoke phiên, khóa resume, quyền bên còn lại không bị chuyển thành thắng",
+      "files": "tests/auth.test.ts; tests/privacy.test.ts",
+      "status": "PASS",
+      "scope": "Local automated evidence"
+    },
+    {
+      "id": "TC-012",
+      "group": "PROFILE",
+      "givenWhen": "Đổi tên hiển thị lần hai trong 7 ngày",
+      "then": "Từ chối; vẫn được trùng tên người khác",
+      "files": "tests/auth.test.ts",
+      "status": "PASS",
+      "scope": "Local automated evidence"
+    },
+    {
+      "id": "TC-013",
+      "group": "FRIEND",
+      "givenWhen": "Hai người gửi lời mời kết bạn chéo",
+      "then": "Tự chuyển quan hệ ACCEPTED duy nhất",
+      "files": "tests/auth.test.ts",
+      "status": "PASS",
+      "scope": "Local automated evidence"
+    },
+    {
+      "id": "TC-014",
+      "group": "FRIEND",
+      "givenWhen": "B từ chối, A gửi lại ngay",
+      "then": "Có thể gửi lại nếu chưa bị chặn/không vượt giới hạn chống spam",
+      "files": "tests/auth.test.ts",
+      "status": "PASS",
+      "scope": "Local automated evidence"
+    },
+    {
+      "id": "TC-015",
+      "group": "FRIEND",
+      "givenWhen": "A chặn B khi B gửi lời mời chơi/chat/video",
+      "then": "Các tương tác trực tiếp bị từ chối",
+      "files": "tests/auth.test.ts; tests/socket.test.ts",
+      "status": "PASS",
+      "scope": "Local automated evidence"
+    },
+    {
+      "id": "TC-016",
+      "group": "ROOM",
+      "givenWhen": "Hai Client join vào một phòng chỉ còn một ghế",
+      "then": "Chỉ một join commit, không có 3 kỳ thủ",
+      "files": "tests/game.test.ts; tests/e2e/journeys.spec.ts",
+      "status": "PASS",
+      "scope": "Local automated evidence"
+    },
+    {
+      "id": "TC-017",
+      "group": "ROOM",
+      "givenWhen": "Tạo room Public/Private",
+      "then": "Public xuất hiện danh sách, Private không xuất hiện",
+      "files": "tests/game.test.ts",
+      "status": "PASS",
+      "scope": "Local automated evidence"
+    },
+    {
+      "id": "TC-018",
+      "group": "ROOM",
+      "givenWhen": "Nhập mã 6 số sai/hết hiệu lực",
+      "then": "Hiện lỗi thích hợp, không gia nhập nhầm phòng",
+      "files": "tests/game.test.ts; tests/socket.test.ts",
+      "status": "PASS",
+      "scope": "Local automated evidence"
+    },
+    {
+      "id": "TC-019",
+      "group": "ROOM",
+      "givenWhen": "Nhấp URL mời khi Guest",
+      "then": "Được chọn Guest hoặc đăng nhập rồi chuyển vào phòng hợp lệ",
+      "files": "tests/game.test.ts; tests/e2e/journeys.spec.ts",
+      "status": "PASS",
+      "scope": "Local automated evidence"
+    },
+    {
+      "id": "TC-020",
+      "group": "ROOM",
+      "givenWhen": "Chủ/khách rời phòng khi countdown",
+      "then": "Đếm ngược hủy, không ghi kết quả thua",
+      "files": "tests/game.test.ts",
+      "status": "PASS",
+      "scope": "Local automated evidence"
+    },
+    {
+      "id": "TC-021",
+      "group": "ROOM",
+      "givenWhen": "Một người đổi time control sau người khác READY",
+      "then": "Ready cả hai reset, không tự bắt đầu với cấu hình cũ",
+      "files": "tests/game.test.ts",
+      "status": "PASS",
+      "scope": "Local automated evidence"
+    },
+    {
+      "id": "TC-022",
+      "group": "ROOM",
+      "givenWhen": "Hai người chơi cùng tài khoản cố chiếm hai ghế",
+      "then": "Từ chối đối thủ trùng actor/định danh",
+      "files": "tests/game.test.ts",
+      "status": "PASS",
+      "scope": "Local automated evidence"
+    },
+    {
+      "id": "TC-023",
+      "group": "MATCH",
+      "givenWhen": "Tìm trận ngẫu nhiên cùng time control",
+      "then": "Ghép hai người khác nhau, không tính ELO",
+      "files": "tests/game.test.ts; tests/socket.test.ts",
+      "status": "PASS",
+      "scope": "Local automated evidence"
+    },
+    {
+      "id": "TC-024",
+      "group": "MATCH",
+      "givenWhen": "Hủy tìm trận trước khi ghép",
+      "then": "Thoát queue; không bị ghép về sau",
+      "files": "tests/game.test.ts; tests/socket.test.ts",
+      "status": "PASS",
+      "scope": "Local automated evidence"
+    },
+    {
+      "id": "TC-025",
+      "group": "MATCH",
+      "givenWhen": "Cấm phòng vì block hai chiều",
+      "then": "Không ghép; không hiển thị dữ liệu không được phép",
+      "files": "tests/game.test.ts; tests/socket.test.ts",
+      "status": "PASS",
+      "scope": "Local automated evidence"
+    },
+    {
+      "id": "TC-026",
+      "group": "RULE",
+      "givenWhen": "Mã bị cản chân, Tượng bị chặn mắt",
+      "then": "Từ chối các nước vi phạm luật",
+      "files": "tests/chess.test.ts",
+      "status": "PASS",
+      "scope": "Local automated evidence"
+    },
+    {
+      "id": "TC-027",
+      "group": "RULE",
+      "givenWhen": "Pháo ăn qua 0/2 ngòi",
+      "then": "Không hợp lệ; đúng 1 ngòi mới hợp lệ",
+      "files": "tests/chess.test.ts",
+      "status": "PASS",
+      "scope": "Local automated evidence"
+    },
+    {
+      "id": "TC-028",
+      "group": "RULE",
+      "givenWhen": "Tốt trước sông đi ngang",
+      "then": "Từ chối; sau sông đi ngang hợp lệ nếu không vi phạm khác",
+      "files": "tests/chess.test.ts",
+      "status": "PASS",
+      "scope": "Local automated evidence"
+    },
+    {
+      "id": "TC-029",
+      "group": "RULE",
+      "givenWhen": "Hai Tướng lộ mặt sau một nước đi",
+      "then": "Từ chối và giữ nguyên lượt",
+      "files": "tests/chess.test.ts",
+      "status": "PASS",
+      "scope": "Local automated evidence"
+    },
+    {
+      "id": "TC-030",
+      "group": "RULE",
+      "givenWhen": "Nước tự để Tướng bị chiếu",
+      "then": "Từ chối và trả snapshot không đổi",
+      "files": "tests/chess.test.ts",
+      "status": "PASS",
+      "scope": "Local automated evidence"
+    },
+    {
+      "id": "TC-031",
+      "group": "RULE",
+      "givenWhen": "Chiếu bí và hết nước hợp lệ",
+      "then": "Bên không còn nước hợp lệ thua, reasonCode phân biệt",
+      "files": "tests/chess.test.ts",
+      "status": "PASS",
+      "scope": "Local automated evidence"
+    },
+    {
+      "id": "TC-032",
+      "group": "RULE",
+      "givenWhen": "Cố đi nước tiếp tục trường chiếu bị cấm",
+      "then": "Từ chối, yêu cầu đổi nước; nếu hết nước thua",
+      "files": "tests/chess.test.ts",
+      "status": "PASS",
+      "scope": "Local automated evidence"
+    },
+    {
+      "id": "TC-033",
+      "group": "RULE",
+      "givenWhen": "Lặp vị trí không thuộc trường chiếu bị cấm",
+      "then": "Không tự hòa 60 nước; áp đúng bộ quy tắc đã thiết kế",
+      "files": "tests/chess.test.ts",
+      "status": "PASS",
+      "scope": "Local automated evidence"
+    },
+    {
+      "id": "TC-034",
+      "group": "TIME",
+      "givenWhen": "Chọn không giới hạn, đi nhiều lượt",
+      "then": "Không phát sự kiện hết giờ",
+      "files": "tests/game.test.ts",
+      "status": "PASS",
+      "scope": "Local automated evidence"
+    },
+    {
+      "id": "TC-035",
+      "group": "TIME",
+      "givenWhen": "Chọn 5/10/15/30 và người chơi hết giờ",
+      "then": "Thua đúng người hết giờ, chỉ một result",
+      "files": "tests/game.test.ts",
+      "status": "PASS",
+      "scope": "Local automated evidence"
+    },
+    {
+      "id": "TC-036",
+      "group": "TIME",
+      "givenWhen": "Client thay đổi đồng hồ máy",
+      "then": "Không làm thay đổi clock authoritative",
+      "files": "tests/game.test.ts; tests/socket.test.ts",
+      "status": "PASS",
+      "scope": "Local automated evidence"
+    },
+    {
+      "id": "TC-037",
+      "group": "TIME",
+      "givenWhen": "Nước sai luật khi đang đến lượt",
+      "then": "Không chuyển lượt, đồng hồ vẫn chạy",
+      "files": "tests/game.test.ts",
+      "status": "PASS",
+      "scope": "Local automated evidence"
+    },
+    {
+      "id": "TC-038",
+      "group": "CONN",
+      "givenWhen": "A rớt mạng, quay lại trong 60 giây",
+      "then": "Resume chính xác board/clock và thời gian đã đóng băng",
+      "files": "tests/game.test.ts",
+      "status": "PASS",
+      "scope": "Local automated evidence"
+    },
+    {
+      "id": "TC-039",
+      "group": "CONN",
+      "givenWhen": "A rớt >60s, B vẫn online",
+      "then": "A thua do disconnect, B thắng",
+      "files": "tests/game.test.ts",
+      "status": "PASS",
+      "scope": "Local automated evidence"
+    },
+    {
+      "id": "TC-040",
+      "group": "CONN",
+      "givenWhen": "A rớt t0, B rớt t20, cả hai không quay lại",
+      "then": "Đến khi cả hai quá deadline: CANCELED, lưu biên bản, không DRAW",
+      "files": "tests/game.test.ts",
+      "status": "PASS",
+      "scope": "Local automated evidence"
+    },
+    {
+      "id": "TC-041",
+      "group": "CONN",
+      "givenWhen": "A rớt t0, B rớt t20, B trở lại trước t80 khi A quá hạn",
+      "then": "B thắng, không hủy ván",
+      "files": "tests/game.test.ts",
+      "status": "PASS",
+      "scope": "Local automated evidence"
+    },
+    {
+      "id": "TC-042",
+      "group": "CONN",
+      "givenWhen": "Người chơi reconnect nhiều lần cố cộng thời gian",
+      "then": "Không reset deadline/budget theo refresh",
+      "files": "tests/game.test.ts",
+      "status": "PASS",
+      "scope": "Local automated evidence"
+    },
+    {
+      "id": "TC-043",
+      "group": "CONN",
+      "givenWhen": "Đăng nhập thiết bị mới trước deadline",
+      "then": "Phiên cũ bị thu hồi; thiết bị mới được snapshot",
+      "files": "tests/game.test.ts; tests/socket.test.ts",
+      "status": "PASS",
+      "scope": "Local automated evidence"
+    },
+    {
+      "id": "TC-044",
+      "group": "CONN",
+      "givenWhen": "Server restart giữa trận khi state bền vững",
+      "then": "Không có nước đi mất/nhân đôi; xử lý clock an toàn",
+      "files": "tests/game.test.ts",
+      "status": "PASS",
+      "scope": "Local automated evidence"
+    },
+    {
+      "id": "TC-045",
+      "group": "SAVE",
+      "givenWhen": "A yêu cầu lưu, B từ chối",
+      "then": "Trận ACTIVE bình thường, không có SAVED",
+      "files": "tests/game.test.ts",
+      "status": "PASS",
+      "scope": "Local automated evidence"
+    },
+    {
+      "id": "TC-046",
+      "group": "SAVE",
+      "givenWhen": "A yêu cầu lưu, B chấp nhận",
+      "then": "Chỉ một snapshot SAVED chính xác hai User gốc",
+      "files": "tests/game.test.ts; tests/e2e/journeys.spec.ts",
+      "status": "PASS",
+      "scope": "Local automated evidence"
+    },
+    {
+      "id": "TC-047",
+      "group": "SAVE",
+      "givenWhen": "Hai người cùng gửi SAVE gần như đồng thời",
+      "then": "Chỉ một yêu cầu hiệu lực và một transaction save",
+      "files": "tests/game.test.ts",
+      "status": "PASS",
+      "scope": "Local automated evidence"
+    },
+    {
+      "id": "TC-048",
+      "group": "SAVE",
+      "givenWhen": "A xin lưu khi đang có người Guest",
+      "then": "Không lưu dài hạn khi chưa đủ hai User",
+      "files": "tests/game.test.ts",
+      "status": "PASS",
+      "scope": "Local automated evidence"
+    },
+    {
+      "id": "TC-049",
+      "group": "SAVE",
+      "givenWhen": "Một nước đi được ghi trong lúc SAVE chờ xác nhận",
+      "then": "Snapshot theo thứ tự commit, stale confirmation yêu cầu xác minh lại",
+      "files": "tests/game.test.ts",
+      "status": "PASS",
+      "scope": "Local automated evidence"
+    },
+    {
+      "id": "TC-050",
+      "group": "SAVE",
+      "givenWhen": "Chiếu bí/đầu hàng commit ngay trước SAVE",
+      "then": "FINISHED giữ hiệu lực; SAVE bị từ chối",
+      "files": "tests/game.test.ts",
+      "status": "PASS",
+      "scope": "Local automated evidence"
+    },
+    {
+      "id": "TC-051",
+      "group": "SAVE",
+      "givenWhen": "DB rollback trong lúc SAVE",
+      "then": "Không hiển thị lưu thành công; Match nhất quán",
+      "files": "tests/game.test.ts",
+      "status": "PASS",
+      "scope": "Local automated evidence"
+    },
+    {
+      "id": "TC-052",
+      "group": "RESUME",
+      "givenWhen": "B offline khi A mời tiếp tục",
+      "then": "Request + notification còn lưu, Match vẫn SAVED",
+      "files": "tests/game.test.ts",
+      "status": "PASS",
+      "scope": "Local automated evidence"
+    },
+    {
+      "id": "TC-053",
+      "group": "RESUME",
+      "givenWhen": "B từ chối tiếp tục",
+      "then": "Match vẫn SAVED, không sinh ACTIVE mới",
+      "files": "tests/game.test.ts",
+      "status": "PASS",
+      "scope": "Local automated evidence"
+    },
+    {
+      "id": "TC-054",
+      "group": "RESUME",
+      "givenWhen": "Hai người READY để resume đúng saved match",
+      "then": "Đúng màu/board/clock/lượt, không tạo trận nhân đôi",
+      "files": "tests/game.test.ts; tests/e2e/journeys.spec.ts",
+      "status": "PASS",
+      "scope": "Local automated evidence"
+    },
+    {
+      "id": "TC-055",
+      "group": "RESUME",
+      "givenWhen": "User khác dò matchId muốn resume",
+      "then": "Từ chối 403, không lộ snapshot",
+      "files": "tests/game.test.ts",
+      "status": "PASS",
+      "scope": "Local automated evidence"
+    },
+    {
+      "id": "TC-056",
+      "group": "DRAW",
+      "givenWhen": "Xin hòa không được đồng ý",
+      "then": "Không kết thúc hòa",
+      "files": "tests/game.test.ts",
+      "status": "PASS",
+      "scope": "Local automated evidence"
+    },
+    {
+      "id": "TC-057",
+      "group": "DRAW",
+      "givenWhen": "Hai bên đồng ý xin hòa",
+      "then": "FINISHED/DRAW đúng một lần",
+      "files": "tests/game.test.ts",
+      "status": "PASS",
+      "scope": "Local automated evidence"
+    },
+    {
+      "id": "TC-058",
+      "group": "UNDO",
+      "givenWhen": "Hai bên đồng ý Undo",
+      "then": "Khôi phục board/timers/history đồng nhất",
+      "files": "tests/game.test.ts",
+      "status": "PASS",
+      "scope": "Local automated evidence"
+    },
+    {
+      "id": "TC-059",
+      "group": "VIDEO",
+      "givenWhen": "B từ chối lời mời Video Call",
+      "then": "Không mở camera/mic, PvP vẫn hoạt động",
+      "files": "tests/game.test.ts; tests/e2e/journeys.spec.ts",
+      "status": "PASS",
+      "scope": "Local real WebRTC pipeline with fake capture; hardware/TURN outside scope"
+    },
+    {
+      "id": "TC-060",
+      "group": "VIDEO",
+      "givenWhen": "Một bên cấp quyền camera, bên kia chưa đồng ý",
+      "then": "Chưa thực hiện luồng video hai phía",
+      "files": "tests/game.test.ts; tests/e2e/journeys.spec.ts",
+      "status": "PASS",
+      "scope": "Local real WebRTC pipeline with fake capture; hardware/TURN outside scope"
+    },
+    {
+      "id": "TC-061",
+      "group": "VIDEO",
+      "givenWhen": "WebRTC lỗi kết nối hoặc mạng yếu",
+      "then": "Trận chơi vẫn tiếp tục; media fallback/đóng an toàn",
+      "files": "tests/game.test.ts; tests/e2e/journeys.spec.ts",
+      "status": "PASS",
+      "scope": "Local real WebRTC pipeline with fake capture; hardware/TURN outside scope"
+    },
+    {
+      "id": "TC-062",
+      "group": "VIDEO",
+      "givenWhen": "Match SAVED hoặc FINISHED",
+      "then": "Media tracks đóng và không ghi âm/hình",
+      "files": "tests/game.test.ts; tests/e2e/journeys.spec.ts",
+      "status": "PASS",
+      "scope": "Local real WebRTC pipeline with fake capture; hardware/TURN outside scope"
+    },
+    {
+      "id": "TC-063",
+      "group": "CHAT",
+      "givenWhen": "Người thứ ba giả mạo chat matchId",
+      "then": "Bị từ chối và ghi audit cần thiết",
+      "files": "tests/game.test.ts; tests/socket.test.ts",
+      "status": "PASS",
+      "scope": "Local automated evidence"
+    },
+    {
+      "id": "TC-064",
+      "group": "AI",
+      "givenWhen": "Tải xong AI, tắt mạng rồi refresh",
+      "then": "Mở được chức năng AI khi cache còn và Worker chạy được",
+      "files": "tests/e2e/journeys.spec.ts",
+      "status": "PASS",
+      "scope": "Offline Chromium reload, 10 human + 10 AI plies, zero Backend requests"
+    },
+    {
+      "id": "TC-065",
+      "group": "AI",
+      "givenWhen": "Dữ liệu AI thiếu khi offline",
+      "then": "Thông báo thiếu asset, không âm thầm gọi server",
+      "files": "tests/e2e/journeys.spec.ts",
+      "status": "PASS",
+      "scope": "Local automated evidence"
+    },
+    {
+      "id": "TC-066",
+      "group": "AI",
+      "givenWhen": "Undo khi Worker đang suy nghĩ",
+      "then": "Hủy request AI cũ, không xuất hiện nước đi cũ sau hoàn tác",
+      "files": "tests/e2e/journeys.spec.ts",
+      "status": "PASS",
+      "scope": "Local automated evidence"
+    },
+    {
+      "id": "TC-067",
+      "group": "AI",
+      "givenWhen": "User chơi offline rồi khôi phục ván",
+      "then": "Snapshot hợp lệ được mở lại; không làm mất nước đã commit",
+      "files": "tests/e2e/journeys.spec.ts",
+      "status": "PASS",
+      "scope": "Local automated evidence"
+    },
+    {
+      "id": "TC-068",
+      "group": "AI",
+      "givenWhen": "Guest hết phiên/clear session data",
+      "then": "Không khẳng định dữ liệu Guest được lưu dài hạn",
+      "files": "tests/e2e/journeys.spec.ts",
+      "status": "PASS",
+      "scope": "Local automated evidence"
+    },
+    {
+      "id": "TC-069",
+      "group": "HISTORY",
+      "givenWhen": "Một ván bị hủy vì hai bên offline",
+      "then": "Lịch sử có reason CANCELED, không tính W/L/D",
+      "files": "tests/game.test.ts; tests/privacy.test.ts",
+      "status": "PASS",
+      "scope": "Local automated evidence"
+    },
+    {
+      "id": "TC-070",
+      "group": "HISTORY",
+      "givenWhen": "Replay qua từng nước và sau Undo",
+      "then": "Chỉ phát nước hiệu lực, không thay đổi Match gốc",
+      "files": "tests/game.test.ts; tests/e2e/journeys.spec.ts",
+      "status": "PASS",
+      "scope": "Local automated evidence"
+    },
+    {
+      "id": "TC-071",
+      "group": "PRIVACY",
+      "givenWhen": "Người dùng ẩn lịch sử cá nhân",
+      "then": "Người lạ không thấy, kỳ thủ cùng ván vẫn xem theo quyền",
+      "files": "tests/game.test.ts; tests/privacy.test.ts",
+      "status": "PASS",
+      "scope": "Local automated evidence"
+    }
+  ],
+  "latestReadinessReport": "final-readiness-report.md"
+}

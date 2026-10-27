@@ -1,0 +1,251 @@
+{
+  "date": "2026-10-16T06:12:52.099Z",
+  "environment": {
+    "cpu": "12th Gen Intel(R) Core(TM) i5-12500H",
+    "memoryGB": 15.710990905761719,
+    "node": "v24.14.0"
+  },
+  "scope": "Synthetic tactical fixtures in Node, endpoint process RSS (not peak/Worker RAM); no Elo or human strength inference",
+  "samples": [
+    {
+      "case": "opening",
+      "level": "easy",
+      "move": {
+        "from": 64,
+        "to": 1
+      },
+      "nodes": 44,
+      "depth": 1,
+      "ms": 4.638200000000012,
+      "legal": true,
+      "startedInCheck": false,
+      "endedInCheck": false,
+      "capturesFreeRook": null,
+      "avoidsPoisonedPawn": null,
+      "immediateMaterialDelta": 400,
+      "processCPUms": 0,
+      "rssBeforeMB": 72.2578125,
+      "rssAfterMB": 73.66796875
+    },
+    {
+      "case": "opening",
+      "level": "medium",
+      "move": {
+        "from": 64,
+        "to": 1
+      },
+      "nodes": 172,
+      "depth": 2,
+      "ms": 33.075200000000024,
+      "legal": true,
+      "startedInCheck": false,
+      "endedInCheck": false,
+      "capturesFreeRook": null,
+      "avoidsPoisonedPawn": null,
+      "immediateMaterialDelta": 400,
+      "processCPUms": 94,
+      "rssBeforeMB": 73.671875,
+      "rssAfterMB": 74.41015625
+    },
+    {
+      "case": "opening",
+      "level": "hard",
+      "move": {
+        "from": 64,
+        "to": 1
+      },
+      "nodes": 17852,
+      "depth": 3,
+      "ms": 1300.1888,
+      "legal": true,
+      "startedInCheck": false,
+      "endedInCheck": false,
+      "capturesFreeRook": null,
+      "avoidsPoisonedPawn": null,
+      "immediateMaterialDelta": 400,
+      "processCPUms": 1359,
+      "rssBeforeMB": 74.41015625,
+      "rssAfterMB": 79.22265625
+    },
+    {
+      "case": "free-rook",
+      "level": "easy",
+      "move": {
+        "from": 81,
+        "to": 63
+      },
+      "nodes": 9,
+      "depth": 1,
+      "ms": 0.13850000000002183,
+      "legal": true,
+      "startedInCheck": false,
+      "endedInCheck": false,
+      "capturesFreeRook": true,
+      "avoidsPoisonedPawn": null,
+      "immediateMaterialDelta": 900,
+      "processCPUms": 0,
+      "rssBeforeMB": 79.22265625,
+      "rssAfterMB": 79.22265625
+    },
+    {
+      "case": "free-rook",
+      "level": "medium",
+      "move": {
+        "from": 81,
+        "to": 63
+      },
+      "nodes": 29,
+      "depth": 2,
+      "ms": 1.2007000000000971,
+      "legal": true,
+      "startedInCheck": false,
+      "endedInCheck": false,
+      "capturesFreeRook": true,
+      "avoidsPoisonedPawn": null,
+      "immediateMaterialDelta": 900,
+      "processCPUms": 0,
+      "rssBeforeMB": 79.22265625,
+      "rssAfterMB": 79.328125
+    },
+    {
+      "case": "free-rook",
+      "level": "hard",
+      "move": {
+        "from": 81,
+        "to": 63
+      },
+      "nodes": 195,
+      "depth": 4,
+      "ms": 7.795499999999947,
+      "legal": true,
+      "startedInCheck": false,
+      "endedInCheck": false,
+      "capturesFreeRook": true,
+      "avoidsPoisonedPawn": null,
+      "immediateMaterialDelta": 900,
+      "processCPUms": 15,
+      "rssBeforeMB": 79.328125,
+      "rssAfterMB": 79.9140625
+    },
+    {
+      "case": "poisoned-pawn",
+      "level": "easy",
+      "move": {
+        "from": 81,
+        "to": 63
+      },
+      "nodes": 9,
+      "depth": 1,
+      "ms": 0.11050000000000182,
+      "legal": true,
+      "startedInCheck": false,
+      "endedInCheck": false,
+      "capturesFreeRook": null,
+      "avoidsPoisonedPawn": false,
+      "immediateMaterialDelta": 170,
+      "processCPUms": 0,
+      "rssBeforeMB": 79.9140625,
+      "rssAfterMB": 79.94140625
+    },
+    {
+      "case": "poisoned-pawn",
+      "level": "medium",
+      "move": {
+        "from": 49,
+        "to": 40
+      },
+      "nodes": 62,
+      "depth": 2,
+      "ms": 1.4572000000000571,
+      "legal": true,
+      "startedInCheck": false,
+      "endedInCheck": false,
+      "capturesFreeRook": null,
+      "avoidsPoisonedPawn": true,
+      "immediateMaterialDelta": 10,
+      "processCPUms": 0,
+      "rssBeforeMB": 79.94140625,
+      "rssAfterMB": 80.8046875
+    },
+    {
+      "case": "poisoned-pawn",
+      "level": "hard",
+      "move": {
+        "from": 85,
+        "to": 84
+      },
+      "nodes": 1536,
+      "depth": 4,
+      "ms": 32.93139999999994,
+      "legal": true,
+      "startedInCheck": false,
+      "endedInCheck": false,
+      "capturesFreeRook": null,
+      "avoidsPoisonedPawn": true,
+      "immediateMaterialDelta": 0,
+      "processCPUms": 32,
+      "rssBeforeMB": 80.8046875,
+      "rssAfterMB": 79.2421875
+    },
+    {
+      "case": "escape-check",
+      "level": "easy",
+      "move": {
+        "from": 85,
+        "to": 84
+      },
+      "nodes": 2,
+      "depth": 1,
+      "ms": 0.03950000000008913,
+      "legal": true,
+      "startedInCheck": true,
+      "endedInCheck": false,
+      "capturesFreeRook": null,
+      "avoidsPoisonedPawn": null,
+      "immediateMaterialDelta": 0,
+      "processCPUms": 0,
+      "rssBeforeMB": 79.2421875,
+      "rssAfterMB": 79.2421875
+    },
+    {
+      "case": "escape-check",
+      "level": "medium",
+      "move": {
+        "from": 85,
+        "to": 84
+      },
+      "nodes": 26,
+      "depth": 2,
+      "ms": 0.4275000000000091,
+      "legal": true,
+      "startedInCheck": true,
+      "endedInCheck": false,
+      "capturesFreeRook": null,
+      "avoidsPoisonedPawn": null,
+      "immediateMaterialDelta": 0,
+      "processCPUms": 0,
+      "rssBeforeMB": 79.2421875,
+      "rssAfterMB": 79.2421875
+    },
+    {
+      "case": "escape-check",
+      "level": "hard",
+      "move": {
+        "from": 85,
+        "to": 84
+      },
+      "nodes": 270,
+      "depth": 4,
+      "ms": 9.724100000000135,
+      "legal": true,
+      "startedInCheck": true,
+      "endedInCheck": false,
+      "capturesFreeRook": null,
+      "avoidsPoisonedPawn": null,
+      "immediateMaterialDelta": 0,
+      "processCPUms": 15,
+      "rssBeforeMB": 79.2421875,
+      "rssAfterMB": 79.2421875
+    }
+  ]
+}
