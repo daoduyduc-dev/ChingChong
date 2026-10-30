@@ -1,5 +1,9 @@
 # Tiến độ — cập nhật 15/10/2026 (Asia/Saigon)
 
+## Release 30/10/2026 — mới nhất
+
+Đã cập nhật GitHub main cc0e5b9, vá 5 dependencies, triển khai FE/Nginx + BE/Socket.IO + PostgreSQL riêng bằng Docker tại 127.0.0.1:5180. Logic/API **76/76**, UI **23/23** (gồm wrapper 8 E2E), container acceptance **8/8**, browser smoke **3/3** đạt. Backup/restore 12 bảng và cold restart/persistence/WebSocket thực đạt. Runtime audit 0; full tree còn 4 low upstream chưa vá. Giữ hỗ trợ Supabase/Prisma qua compose.external-db; chưa có URL Supabase/hosting/provider credentials nên **PARTIALLY COMPLETE**, chưa public. Xem `release-report-2026-10-30.md` và `release-runbook.md`; không dùng các checkpoint phía dưới như kết quả mới nhất.
+
 ## Hardening 16/10/2026
 
 Regression mới: **63 unit/integration PASS, 8 E2E PASS**, typecheck/lint/build/migrations/generate/audit PASS. Sửa OAuth missing-state/provider validation, timeout SMTP/OAuth, late camera cleanup, signaling rate isolation và duplicate transceiver/offer glare. Bổ sung SMTP socket thật local, OAuth mock hai provider, Admin UI/profile privacy và User IndexedDB offline. Không đổi engine/BA-11, không reset DB. Backup/restore BLOCKED vì thiếu client tools; Docker daemon và dịch vụ/hardware ngoài vẫn BLOCKED/NOT RUN. Xem `final-readiness-report.md` và `deployment-runbook.md`; trạng thái **PARTIALLY COMPLETE**.

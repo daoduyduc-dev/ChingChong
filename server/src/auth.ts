@@ -43,7 +43,9 @@ export const secret = () => {
 };
 export const cookieOptions = {
   httpOnly: true,
-  secure: process.env.APP_URL?.startsWith("https:") ?? false,
+  secure:
+    !!process.env.RAILWAY_ENVIRONMENT_ID ||
+    (process.env.APP_URL?.startsWith("https:") ?? false),
   sameSite: "strict" as const,
   path: "/api/auth",
   maxAge: 30 * 86400000,
@@ -330,7 +332,7 @@ export class AuthService {
     const prefix = provider.toUpperCase(),
       client = process.env[prefix + "_CLIENT_ID"];
     assert(
-      client && process.env[prefix + "_CLIENT_SECRET"],
+      client && process.env[prefix + "_CLIENT_SECRET"] && process.env.APP_URL,
       "OAUTH_NOT_CONFIGURED",
       503,
     );

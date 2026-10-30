@@ -15,7 +15,7 @@ export function AuthDialog({
   busy: boolean;
   error: string;
   identifier: string;
-  oauth: { google?: boolean; facebook?: boolean };
+  oauth: { google?: boolean };
   onMode: (mode: AuthMode) => void;
   onClose: () => void;
   onSubmit: (event: FormEvent<HTMLFormElement>) => Promise<void>;
@@ -246,18 +246,10 @@ export function AuthDialog({
               >
                 Google
               </button>
-              <button
-                disabled={!oauth.facebook || busy}
-                onClick={() => {
-                  location.href = "/api/auth/oauth/facebook";
-                }}
-              >
-                Facebook
-              </button>
             </div>
-            {!oauth.google && !oauth.facebook && (
+            {!oauth.google && (
               <small>
-                Đăng nhập mạng xã hội chưa được cấu hình trên máy chủ này.
+                Đăng nhập Google chưa được cấu hình trên máy chủ này.
               </small>
             )}
             <button

@@ -1,0 +1,534 @@
+{
+  "date": "2026-10-30T13:03:16.988Z",
+  "origin": "http://127.0.0.1:5181",
+  "scope": "Two paced batches cover all eight existing journeys through the deployed same-origin application and PostgreSQL; Chromium fake capture",
+  "passed": 8,
+  "failed": 0,
+  "status": "PASS",
+  "reports": [
+    {
+      "exitCode": 0,
+      "report": {
+        "config": {
+          "argv": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "D:\\ChingChong\\node_modules\\@playwright\\test\\cli.js",
+            "test",
+            "--config",
+            "tests/deploy/acceptance.config.ts",
+            "--grep-invert",
+            "TC-016/019"
+          ],
+          "configFile": "D:\\ChingChong\\tests\\deploy\\acceptance.config.ts",
+          "rootDir": "D:/ChingChong/tests/e2e",
+          "failOnFlakyTests": false,
+          "forbidOnly": false,
+          "fullyParallel": false,
+          "globalSetup": null,
+          "globalTeardown": null,
+          "globalTimeout": 0,
+          "grep": {},
+          "grepInvert": null,
+          "maxFailures": 0,
+          "metadata": {
+            "actualWorkers": 1
+          },
+          "preserveOutput": "always",
+          "projects": [
+            {
+              "outputDir": "D:/ChingChong/test-results/deployment-acceptance",
+              "repeatEach": 1,
+              "retries": 0,
+              "metadata": {
+                "actualWorkers": 1
+              },
+              "id": "",
+              "name": "",
+              "testDir": "D:/ChingChong/tests/e2e",
+              "testIgnore": [],
+              "testMatch": [
+                "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+              ],
+              "timeout": 90000
+            }
+          ],
+          "filteredProjects": [
+            {
+              "grep": {},
+              "grepInvert": null,
+              "outputDir": "D:\\ChingChong\\test-results\\deployment-acceptance",
+              "repeatEach": 1,
+              "retries": 0,
+              "metadata": {
+                "actualWorkers": 1
+              },
+              "name": "",
+              "testDir": "D:\\ChingChong\\tests\\e2e",
+              "snapshotDir": "D:\\ChingChong\\tests\\e2e",
+              "testIgnore": [],
+              "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+              "timeout": 90000,
+              "use": {
+                "baseURL": "http://127.0.0.1:5181",
+                "headless": true,
+                "actionTimeout": 15000,
+                "trace": "retain-on-failure",
+                "screenshot": "only-on-failure",
+                "launchOptions": {
+                  "args": [
+                    "--use-fake-device-for-media-stream",
+                    "--use-fake-ui-for-media-stream"
+                  ]
+                }
+              },
+              "dependencies": [],
+              "ignoreSnapshots": false,
+              "__projectId": ""
+            }
+          ],
+          "quiet": false,
+          "reporter": [
+            [
+              "list",
+              null
+            ],
+            [
+              "json",
+              {
+                "outputFile": "D:\\ChingChong\\docs\\implementation\\render-deployment-batch-1.json"
+              }
+            ]
+          ],
+          "reportSlowTests": {
+            "max": 5,
+            "threshold": 300000
+          },
+          "shard": null,
+          "tags": [],
+          "updateSnapshots": "default",
+          "updateSourceMethod": "patch",
+          "version": "1.64.1",
+          "workers": 1,
+          "webServer": null
+        },
+        "suites": [
+          {
+            "title": "journeys.spec.ts",
+            "file": "journeys.spec.ts",
+            "column": 0,
+            "line": 0,
+            "specs": [
+              {
+                "title": "Admin browser manages only its new QA account target; profile privacy settings persist",
+                "ok": true,
+                "tags": [],
+                "tests": [
+                  {
+                    "timeout": 90000,
+                    "annotations": [],
+                    "expectedStatus": "passed",
+                    "projectId": "",
+                    "projectName": "",
+                    "results": [
+                      {
+                        "workerIndex": 0,
+                        "parallelIndex": 0,
+                        "status": "passed",
+                        "duration": 4261,
+                        "errors": [],
+                        "stdout": [],
+                        "stderr": [],
+                        "retry": 0,
+                        "startTime": "2026-10-30T13:01:44.625Z",
+                        "annotations": [],
+                        "attachments": []
+                      }
+                    ],
+                    "status": "expected"
+                  }
+                ],
+                "id": "aa09586c1d16412a1f00-ceaaa242bafe71a8f050",
+                "file": "journeys.spec.ts",
+                "line": 32,
+                "column": 1
+              },
+              {
+                "title": "two independent browsers: register, private room, move, chat, WebRTC consent, save/resume, replay",
+                "ok": true,
+                "tags": [],
+                "tests": [
+                  {
+                    "timeout": 90000,
+                    "annotations": [],
+                    "expectedStatus": "passed",
+                    "projectId": "",
+                    "projectName": "",
+                    "results": [
+                      {
+                        "workerIndex": 0,
+                        "parallelIndex": 0,
+                        "status": "passed",
+                        "duration": 11825,
+                        "errors": [],
+                        "stdout": [],
+                        "stderr": [],
+                        "retry": 0,
+                        "startTime": "2026-10-30T13:01:48.999Z",
+                        "annotations": [],
+                        "attachments": []
+                      }
+                    ],
+                    "status": "expected"
+                  }
+                ],
+                "id": "aa09586c1d16412a1f00-d3b0604494ff7ffdcef1",
+                "file": "journeys.spec.ts",
+                "line": 120,
+                "column": 1
+              },
+              {
+                "title": "TC-064/067/068 offline reload and 10 human plies, no Backend calls, local recovery and Guest clear",
+                "ok": true,
+                "tags": [],
+                "tests": [
+                  {
+                    "timeout": 90000,
+                    "annotations": [],
+                    "expectedStatus": "passed",
+                    "projectId": "",
+                    "projectName": "",
+                    "results": [
+                      {
+                        "workerIndex": 0,
+                        "parallelIndex": 0,
+                        "status": "passed",
+                        "duration": 3403,
+                        "errors": [],
+                        "stdout": [],
+                        "stderr": [],
+                        "retry": 0,
+                        "startTime": "2026-10-30T13:02:00.844Z",
+                        "annotations": [],
+                        "attachments": []
+                      }
+                    ],
+                    "status": "expected"
+                  }
+                ],
+                "id": "aa09586c1d16412a1f00-7c82a49cf7ff355a7a5e",
+                "file": "journeys.spec.ts",
+                "line": 358,
+                "column": 1
+              },
+              {
+                "title": "TC-067 authenticated User recovers IndexedDB game after offline reload with no Backend requests",
+                "ok": true,
+                "tags": [],
+                "tests": [
+                  {
+                    "timeout": 90000,
+                    "annotations": [],
+                    "expectedStatus": "passed",
+                    "projectId": "",
+                    "projectName": "",
+                    "results": [
+                      {
+                        "workerIndex": 0,
+                        "parallelIndex": 0,
+                        "status": "passed",
+                        "duration": 2191,
+                        "errors": [],
+                        "stdout": [],
+                        "stderr": [],
+                        "retry": 0,
+                        "startTime": "2026-10-30T13:02:04.259Z",
+                        "annotations": [],
+                        "attachments": []
+                      }
+                    ],
+                    "status": "expected"
+                  }
+                ],
+                "id": "aa09586c1d16412a1f00-5b086da5de22e3ded097",
+                "file": "journeys.spec.ts",
+                "line": 425,
+                "column": 1
+              },
+              {
+                "title": "responsive 390px, local AI and screenshots",
+                "ok": true,
+                "tags": [],
+                "tests": [
+                  {
+                    "timeout": 90000,
+                    "annotations": [],
+                    "expectedStatus": "passed",
+                    "projectId": "",
+                    "projectName": "",
+                    "results": [
+                      {
+                        "workerIndex": 0,
+                        "parallelIndex": 0,
+                        "status": "passed",
+                        "duration": 801,
+                        "errors": [],
+                        "stdout": [],
+                        "stderr": [],
+                        "retry": 0,
+                        "startTime": "2026-10-30T13:02:06.460Z",
+                        "annotations": [],
+                        "attachments": []
+                      }
+                    ],
+                    "status": "expected"
+                  }
+                ],
+                "id": "aa09586c1d16412a1f00-b3867897a407a9a47687",
+                "file": "journeys.spec.ts",
+                "line": 483,
+                "column": 1
+              },
+              {
+                "title": "TC-066 Undo terminates a real thinking Worker; hint and corrupted local snapshot handling",
+                "ok": true,
+                "tags": [],
+                "tests": [
+                  {
+                    "timeout": 90000,
+                    "annotations": [],
+                    "expectedStatus": "passed",
+                    "projectId": "",
+                    "projectName": "",
+                    "results": [
+                      {
+                        "workerIndex": 0,
+                        "parallelIndex": 0,
+                        "status": "passed",
+                        "duration": 4052,
+                        "errors": [],
+                        "stdout": [],
+                        "stderr": [],
+                        "retry": 0,
+                        "startTime": "2026-10-30T13:02:07.270Z",
+                        "annotations": [],
+                        "attachments": []
+                      }
+                    ],
+                    "status": "expected"
+                  }
+                ],
+                "id": "aa09586c1d16412a1f00-ed8f03cba3ae884371f8",
+                "file": "journeys.spec.ts",
+                "line": 577,
+                "column": 1
+              },
+              {
+                "title": "TC-065 missing Worker cache asset produces explicit failure while offline",
+                "ok": true,
+                "tags": [],
+                "tests": [
+                  {
+                    "timeout": 90000,
+                    "annotations": [],
+                    "expectedStatus": "passed",
+                    "projectId": "",
+                    "projectName": "",
+                    "results": [
+                      {
+                        "workerIndex": 0,
+                        "parallelIndex": 0,
+                        "status": "passed",
+                        "duration": 1012,
+                        "errors": [],
+                        "stdout": [],
+                        "stderr": [],
+                        "retry": 0,
+                        "startTime": "2026-10-30T13:02:11.331Z",
+                        "annotations": [],
+                        "attachments": []
+                      }
+                    ],
+                    "status": "expected"
+                  }
+                ],
+                "id": "aa09586c1d16412a1f00-13919e3c69ec46297886",
+                "file": "journeys.spec.ts",
+                "line": 643,
+                "column": 1
+              }
+            ]
+          }
+        ],
+        "errors": [],
+        "stats": {
+          "startTime": "2026-10-30T13:01:44.170Z",
+          "duration": 28333.799,
+          "expected": 7,
+          "skipped": 0,
+          "unexpected": 0,
+          "flaky": 0
+        }
+      }
+    },
+    {
+      "exitCode": 0,
+      "report": {
+        "config": {
+          "argv": [
+            "C:\\Program Files\\nodejs\\node.exe",
+            "D:\\ChingChong\\node_modules\\@playwright\\test\\cli.js",
+            "test",
+            "--config",
+            "tests/deploy/acceptance.config.ts",
+            "--grep",
+            "TC-016/019"
+          ],
+          "configFile": "D:\\ChingChong\\tests\\deploy\\acceptance.config.ts",
+          "rootDir": "D:/ChingChong/tests/e2e",
+          "failOnFlakyTests": false,
+          "forbidOnly": false,
+          "fullyParallel": false,
+          "globalSetup": null,
+          "globalTeardown": null,
+          "globalTimeout": 0,
+          "grep": {},
+          "grepInvert": null,
+          "maxFailures": 0,
+          "metadata": {
+            "actualWorkers": 1
+          },
+          "preserveOutput": "always",
+          "projects": [
+            {
+              "outputDir": "D:/ChingChong/test-results/deployment-acceptance",
+              "repeatEach": 1,
+              "retries": 0,
+              "metadata": {
+                "actualWorkers": 1
+              },
+              "id": "",
+              "name": "",
+              "testDir": "D:/ChingChong/tests/e2e",
+              "testIgnore": [],
+              "testMatch": [
+                "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+              ],
+              "timeout": 90000
+            }
+          ],
+          "filteredProjects": [
+            {
+              "grep": {},
+              "grepInvert": null,
+              "outputDir": "D:\\ChingChong\\test-results\\deployment-acceptance",
+              "repeatEach": 1,
+              "retries": 0,
+              "metadata": {
+                "actualWorkers": 1
+              },
+              "name": "",
+              "testDir": "D:\\ChingChong\\tests\\e2e",
+              "snapshotDir": "D:\\ChingChong\\tests\\e2e",
+              "testIgnore": [],
+              "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+              "timeout": 90000,
+              "use": {
+                "baseURL": "http://127.0.0.1:5181",
+                "headless": true,
+                "actionTimeout": 15000,
+                "trace": "retain-on-failure",
+                "screenshot": "only-on-failure",
+                "launchOptions": {
+                  "args": [
+                    "--use-fake-device-for-media-stream",
+                    "--use-fake-ui-for-media-stream"
+                  ]
+                }
+              },
+              "dependencies": [],
+              "ignoreSnapshots": false,
+              "__projectId": ""
+            }
+          ],
+          "quiet": false,
+          "reporter": [
+            [
+              "list",
+              null
+            ],
+            [
+              "json",
+              {
+                "outputFile": "D:\\ChingChong\\docs\\implementation\\render-deployment-batch-2.json"
+              }
+            ]
+          ],
+          "reportSlowTests": {
+            "max": 5,
+            "threshold": 300000
+          },
+          "shard": null,
+          "tags": [],
+          "updateSnapshots": "default",
+          "updateSourceMethod": "patch",
+          "version": "1.64.1",
+          "workers": 1,
+          "webServer": null
+        },
+        "suites": [
+          {
+            "title": "journeys.spec.ts",
+            "file": "journeys.spec.ts",
+            "column": 0,
+            "line": 0,
+            "specs": [
+              {
+                "title": "TC-016/019 two browser guests open invitation URL and race for the last seat; QR is real",
+                "ok": true,
+                "tags": [],
+                "tests": [
+                  {
+                    "timeout": 90000,
+                    "annotations": [],
+                    "expectedStatus": "passed",
+                    "projectId": "",
+                    "projectName": "",
+                    "results": [
+                      {
+                        "workerIndex": 0,
+                        "parallelIndex": 0,
+                        "status": "passed",
+                        "duration": 2397,
+                        "errors": [],
+                        "stdout": [],
+                        "stderr": [],
+                        "retry": 0,
+                        "startTime": "2026-10-30T13:03:14.385Z",
+                        "annotations": [],
+                        "attachments": []
+                      }
+                    ],
+                    "status": "expected"
+                  }
+                ],
+                "id": "aa09586c1d16412a1f00-6fce29884d9e5fac8fcd",
+                "file": "journeys.spec.ts",
+                "line": 508,
+                "column": 1
+              }
+            ]
+          }
+        ],
+        "errors": [],
+        "stats": {
+          "startTime": "2026-10-30T13:03:13.951Z",
+          "duration": 3014.243,
+          "expected": 1,
+          "skipped": 0,
+          "unexpected": 0,
+          "flaky": 0
+        }
+      }
+    }
+  ]
+}

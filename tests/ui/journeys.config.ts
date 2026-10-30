@@ -4,6 +4,7 @@ import base from "../../playwright.config";
 export default defineConfig({
   ...base,
   testDir: resolve("tests/e2e"),
+  outputDir: resolve("test-results/ui-journeys"),
   use: { ...base.use, baseURL: process.env.UI_TEST_ORIGIN },
   webServer: undefined,
   reporter: [

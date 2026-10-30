@@ -1,0 +1,46 @@
+name: Verify Kỳ Viện
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_USER: kyvien
+          POSTGRES_PASSWORD: ci_local_only
+          POSTGRES_DB: kyvien
+        ports: ["54329:5432"]
+        options: >-
+          --health-cmd "pg_isready -U kyvien -d kyvien"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      TEST_DATABASE_URL: postgresql://kyvien:ci_local_only@127.0.0.1:54329/kyvien_ci_test
+      JWT_SECRET: ci-only-random-looking-key-at-least-32-characters
+      APP_URL: http://127.0.0.1:5174
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run db:generate
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm test
+      - run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:ui
+      # Build-time low findings remain disclosed; do not accept moderate/high.
+      - run: npm audit --audit-level=moderate
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: verification-json
+          path: |
+            docs/implementation/flow-audit-e2e.json
+          retention-days: 7

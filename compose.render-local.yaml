@@ -1,0 +1,38 @@
+# Isolated rehearsal of ONE Node service serving both UI and Socket.IO.
+services:
+  postgres:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: kyvien
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD}
+      POSTGRES_DB: kyvien
+    ports:
+      - "127.0.0.1:54331:5432"
+    volumes:
+      - render-check-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U kyvien -d kyvien"]
+      interval: 5s
+      retries: 10
+  web:
+    build:
+      context: .
+      dockerfile: deploy/render.Dockerfile
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:5181:10000"
+    environment:
+      DATABASE_URL: postgresql://kyvien:${POSTGRES_PASSWORD}@postgres:5432/kyvien
+      JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET}
+      APP_URL: http://127.0.0.1:5181
+      TRUST_PROXY: 0
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:10000/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      start_period: 30s
+      retries: 10
+volumes:
+  render-check-data:

@@ -235,7 +235,10 @@ it("admin can inspect technical match state without exposing stored chat or resu
     await admin.page
       .getByRole("button", { name: "Tìm kiếm", exact: true })
       .click();
+    await expect(admin.page.locator(".admin-data-row")).toHaveCount(1);
     await admin.page
+      .locator(".admin-data-row")
+      .filter({ hasText: rows[0].id })
       .getByRole("button", { name: "Xem kỹ thuật", exact: true })
       .click();
     await expect(

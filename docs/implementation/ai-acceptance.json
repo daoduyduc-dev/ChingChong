@@ -1,5 +1,5 @@
 {
-  "date": "2026-10-16T06:12:52.099Z",
+  "date": "2026-10-30T12:22:35.134Z",
   "environment": {
     "cpu": "12th Gen Intel(R) Core(TM) i5-12500H",
     "memoryGB": 15.710990905761719,
@@ -16,16 +16,16 @@
       },
       "nodes": 44,
       "depth": 1,
-      "ms": 4.638200000000012,
+      "ms": 11.203800000000001,
       "legal": true,
       "startedInCheck": false,
       "endedInCheck": false,
       "capturesFreeRook": null,
       "avoidsPoisonedPawn": null,
       "immediateMaterialDelta": 400,
-      "processCPUms": 0,
-      "rssBeforeMB": 72.2578125,
-      "rssAfterMB": 73.66796875
+      "processCPUms": 32,
+      "rssBeforeMB": 70.671875,
+      "rssAfterMB": 71.62109375
     },
     {
       "case": "opening",
@@ -36,16 +36,16 @@
       },
       "nodes": 172,
       "depth": 2,
-      "ms": 33.075200000000024,
+      "ms": 65.15770000000003,
       "legal": true,
       "startedInCheck": false,
       "endedInCheck": false,
       "capturesFreeRook": null,
       "avoidsPoisonedPawn": null,
       "immediateMaterialDelta": 400,
-      "processCPUms": 94,
-      "rssBeforeMB": 73.671875,
-      "rssAfterMB": 74.41015625
+      "processCPUms": 156,
+      "rssBeforeMB": 71.62890625,
+      "rssAfterMB": 72.90234375
     },
     {
       "case": "opening",
@@ -54,18 +54,18 @@
         "from": 64,
         "to": 1
       },
-      "nodes": 17852,
+      "nodes": 9467,
       "depth": 3,
-      "ms": 1300.1888,
+      "ms": 1301.5307,
       "legal": true,
       "startedInCheck": false,
       "endedInCheck": false,
       "capturesFreeRook": null,
       "avoidsPoisonedPawn": null,
       "immediateMaterialDelta": 400,
-      "processCPUms": 1359,
-      "rssBeforeMB": 74.41015625,
-      "rssAfterMB": 79.22265625
+      "processCPUms": 1422,
+      "rssBeforeMB": 72.9140625,
+      "rssAfterMB": 70.953125
     },
     {
       "case": "free-rook",
@@ -76,7 +76,7 @@
       },
       "nodes": 9,
       "depth": 1,
-      "ms": 0.13850000000002183,
+      "ms": 0.5494000000001051,
       "legal": true,
       "startedInCheck": false,
       "endedInCheck": false,
@@ -84,8 +84,8 @@
       "avoidsPoisonedPawn": null,
       "immediateMaterialDelta": 900,
       "processCPUms": 0,
-      "rssBeforeMB": 79.22265625,
-      "rssAfterMB": 79.22265625
+      "rssBeforeMB": 70.953125,
+      "rssAfterMB": 70.95703125
     },
     {
       "case": "free-rook",
@@ -96,7 +96,7 @@
       },
       "nodes": 29,
       "depth": 2,
-      "ms": 1.2007000000000971,
+      "ms": 3.657600000000002,
       "legal": true,
       "startedInCheck": false,
       "endedInCheck": false,
@@ -104,8 +104,8 @@
       "avoidsPoisonedPawn": null,
       "immediateMaterialDelta": 900,
       "processCPUms": 0,
-      "rssBeforeMB": 79.22265625,
-      "rssAfterMB": 79.328125
+      "rssBeforeMB": 70.95703125,
+      "rssAfterMB": 71.19921875
     },
     {
       "case": "free-rook",
@@ -116,16 +116,16 @@
       },
       "nodes": 195,
       "depth": 4,
-      "ms": 7.795499999999947,
+      "ms": 20.695199999999886,
       "legal": true,
       "startedInCheck": false,
       "endedInCheck": false,
       "capturesFreeRook": true,
       "avoidsPoisonedPawn": null,
       "immediateMaterialDelta": 900,
-      "processCPUms": 15,
-      "rssBeforeMB": 79.328125,
-      "rssAfterMB": 79.9140625
+      "processCPUms": 0,
+      "rssBeforeMB": 71.203125,
+      "rssAfterMB": 71.9375
     },
     {
       "case": "poisoned-pawn",
@@ -136,7 +136,7 @@
       },
       "nodes": 9,
       "depth": 1,
-      "ms": 0.11050000000000182,
+      "ms": 0.22739999999998872,
       "legal": true,
       "startedInCheck": false,
       "endedInCheck": false,
@@ -144,8 +144,8 @@
       "avoidsPoisonedPawn": false,
       "immediateMaterialDelta": 170,
       "processCPUms": 0,
-      "rssBeforeMB": 79.9140625,
-      "rssAfterMB": 79.94140625
+      "rssBeforeMB": 71.94921875,
+      "rssAfterMB": 72.0703125
     },
     {
       "case": "poisoned-pawn",
@@ -156,16 +156,16 @@
       },
       "nodes": 62,
       "depth": 2,
-      "ms": 1.4572000000000571,
+      "ms": 3.480399999999918,
       "legal": true,
       "startedInCheck": false,
       "endedInCheck": false,
       "capturesFreeRook": null,
       "avoidsPoisonedPawn": true,
       "immediateMaterialDelta": 10,
-      "processCPUms": 0,
-      "rssBeforeMB": 79.94140625,
-      "rssAfterMB": 80.8046875
+      "processCPUms": 16,
+      "rssBeforeMB": 72.0703125,
+      "rssAfterMB": 71.92578125
     },
     {
       "case": "poisoned-pawn",
@@ -176,16 +176,16 @@
       },
       "nodes": 1536,
       "depth": 4,
-      "ms": 32.93139999999994,
+      "ms": 78.68279999999982,
       "legal": true,
       "startedInCheck": false,
       "endedInCheck": false,
       "capturesFreeRook": null,
       "avoidsPoisonedPawn": true,
       "immediateMaterialDelta": 0,
-      "processCPUms": 32,
-      "rssBeforeMB": 80.8046875,
-      "rssAfterMB": 79.2421875
+      "processCPUms": 109,
+      "rssBeforeMB": 71.94140625,
+      "rssAfterMB": 71.56640625
     },
     {
       "case": "escape-check",
@@ -196,7 +196,7 @@
       },
       "nodes": 2,
       "depth": 1,
-      "ms": 0.03950000000008913,
+      "ms": 0.11809999999991305,
       "legal": true,
       "startedInCheck": true,
       "endedInCheck": false,
@@ -204,8 +204,8 @@
       "avoidsPoisonedPawn": null,
       "immediateMaterialDelta": 0,
       "processCPUms": 0,
-      "rssBeforeMB": 79.2421875,
-      "rssAfterMB": 79.2421875
+      "rssBeforeMB": 71.56640625,
+      "rssAfterMB": 71.56640625
     },
     {
       "case": "escape-check",
@@ -216,7 +216,7 @@
       },
       "nodes": 26,
       "depth": 2,
-      "ms": 0.4275000000000091,
+      "ms": 1.2290999999997894,
       "legal": true,
       "startedInCheck": true,
       "endedInCheck": false,
@@ -224,8 +224,8 @@
       "avoidsPoisonedPawn": null,
       "immediateMaterialDelta": 0,
       "processCPUms": 0,
-      "rssBeforeMB": 79.2421875,
-      "rssAfterMB": 79.2421875
+      "rssBeforeMB": 71.56640625,
+      "rssAfterMB": 71.56640625
     },
     {
       "case": "escape-check",
@@ -236,16 +236,16 @@
       },
       "nodes": 270,
       "depth": 4,
-      "ms": 9.724100000000135,
+      "ms": 22.656799999999976,
       "legal": true,
       "startedInCheck": true,
       "endedInCheck": false,
       "capturesFreeRook": null,
       "avoidsPoisonedPawn": null,
       "immediateMaterialDelta": 0,
-      "processCPUms": 15,
-      "rssBeforeMB": 79.2421875,
-      "rssAfterMB": 79.2421875
+      "processCPUms": 16,
+      "rssBeforeMB": 71.56640625,
+      "rssAfterMB": 71.953125
     }
   ]
 }

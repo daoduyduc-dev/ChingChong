@@ -20,6 +20,8 @@ import {
   summary,
 } from "./browse";
 import type { Actor, MatchState, RoomState } from "../../shared/domain";
+import { fileURLToPath } from "node:url";
+import { mountFrontend } from "./frontend";
 const config = z.object({
   visibility: z.enum(["public", "private"]),
   minutes: z.union([
@@ -67,7 +69,17 @@ export function makeApp(game = new GameService(), auth = new AuthService()) {
     });
   app.set("trust proxy", Number(process.env.TRUST_PROXY ?? 0));
   app.use(
-    helmet(),
+    helmet({
+      contentSecurityPolicy: {
+        directives: {
+          // Safari/WebKit also upgrades loopback HTTP, breaking local rehearsals.
+          // Render's HTTPS origin retains the strict upgrade policy.
+          "upgrade-insecure-requests": process.env.APP_URL?.startsWith("https:")
+            ? []
+            : null,
+        },
+      },
+    }),
     cors({ origin: process.env.APP_URL, credentials: true }),
     express.json({ limit: "1mb" }),
     cookieParser(),
@@ -123,8 +135,11 @@ export function makeApp(game = new GameService(), auth = new AuthService()) {
   app.get("/api/config", (_req, res) =>
     res.json({
       oauth: {
-        google: !!process.env.GOOGLE_CLIENT_ID,
-        facebook: !!process.env.FACEBOOK_CLIENT_ID,
+        google: !!(
+          process.env.APP_URL &&
+          process.env.GOOGLE_CLIENT_ID &&
+          process.env.GOOGLE_CLIENT_SECRET
+        ),
       },
       smtp: !!process.env.SMTP_HOST,
     }),
@@ -184,7 +199,7 @@ export function makeApp(game = new GameService(), auth = new AuthService()) {
     "/api/auth/reset-password",
     route((req) => auth.reset(req.body)),
   );
-  for (const provider of ["google", "facebook"] as const) {
+  for (const provider of ["google"] as const) {
     app.get(
       "/api/auth/oauth/" + provider,
       route((_req, res) => auth.oauthStart(provider, res)),
@@ -239,7 +254,7 @@ export function makeApp(game = new GameService(), auth = new AuthService()) {
     "/api/auth/oauth/:provider/link",
     route(async (req, res) => {
       const a = user(res),
-        provider = z.enum(["google", "facebook"]).parse(req.params.provider);
+        provider = z.literal("google").parse(req.params.provider);
       await auth.oauthStart(provider, res, a);
     }),
   );
@@ -1192,6 +1207,11 @@ export function makeApp(game = new GameService(), auth = new AuthService()) {
   app.use("/api", (_req, res) => {
     res.status(404).json({ error: "NOT_FOUND" });
   });
+  if (process.env.SERVE_CLIENT === "true")
+    mountFrontend(
+      app,
+      fileURLToPath(new URL("../../client/dist/", import.meta.url)),
+    );
   app.use(
     (
       error: unknown,

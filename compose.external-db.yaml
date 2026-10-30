@@ -1,0 +1,40 @@
+# Generic managed PostgreSQL. For the class demo on Render, use render.yaml.
+# DATABASE_URL remains backend-only. Put TLS/pool settings in that URL as supplied
+# by the database provider; use its migration-compatible endpoint.
+services:
+  backend:
+    build: .
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: ${DATABASE_URL:?Set the managed PostgreSQL connection string}
+      JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET}
+      APP_URL: ${APP_URL:?Set APP_URL}
+      API_HOST: 0.0.0.0
+      PORT: 3002
+      TRUST_PROXY: 1
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASS: ${SMTP_PASS:-}
+      SMTP_FROM: ${SMTP_FROM:-}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
+      TURN_URL: ${TURN_URL:-}
+      TURN_USERNAME: ${TURN_USERNAME:-}
+      TURN_CREDENTIAL: ${TURN_CREDENTIAL:-}
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3002/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 15s
+      timeout: 5s
+      start_period: 30s
+      retries: 3
+  frontend:
+    build:
+      context: .
+      dockerfile: deploy/frontend.Dockerfile
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${FRONTEND_PORT:-5180}:80"
+    depends_on:
+      backend:
+        condition: service_healthy

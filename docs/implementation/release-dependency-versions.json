@@ -1,0 +1,298 @@
+{
+  "name": "ky-vien",
+  "problems": [
+    "extraneous: @emnapi/runtime@1.11.3 D:\\ChingChong\\node_modules\\@emnapi\\runtime",
+    "extraneous: @img/sharp-wasm32@0.35.5 D:\\ChingChong\\node_modules\\@img\\sharp-wasm32"
+  ],
+  "dependencies": {
+    "@axe-core/playwright": {
+      "version": "4.14.0",
+      "resolved": "https://registry.npmjs.org/@axe-core/playwright/-/playwright-4.14.0.tgz",
+      "overridden": false
+    },
+    "@emnapi/runtime": {
+      "version": "1.11.3",
+      "resolved": "https://registry.npmjs.org/@emnapi/runtime/-/runtime-1.11.3.tgz",
+      "overridden": false,
+      "extraneous": true,
+      "problems": [
+        "extraneous: @emnapi/runtime@1.11.3 D:\\ChingChong\\node_modules\\@emnapi\\runtime"
+      ]
+    },
+    "@eslint/js": {
+      "version": "9.39.5",
+      "resolved": "https://registry.npmjs.org/@eslint/js/-/js-9.39.5.tgz",
+      "overridden": false
+    },
+    "@img/sharp-wasm32": {
+      "version": "0.35.5",
+      "resolved": "https://registry.npmjs.org/@img/sharp-wasm32/-/sharp-wasm32-0.35.5.tgz",
+      "overridden": false,
+      "extraneous": true,
+      "problems": [
+        "extraneous: @img/sharp-wasm32@0.35.5 D:\\ChingChong\\node_modules\\@img\\sharp-wasm32"
+      ]
+    },
+    "@ky-vien/client": {
+      "resolved": "file:../../client",
+      "overridden": false,
+      "dependencies": {
+        "@fontsource/be-vietnam-pro": {
+          "version": "5.3.0",
+          "resolved": "https://registry.npmjs.org/@fontsource/be-vietnam-pro/-/be-vietnam-pro-5.3.0.tgz",
+          "overridden": false
+        },
+        "@fontsource/literata": {
+          "version": "5.3.0",
+          "resolved": "https://registry.npmjs.org/@fontsource/literata/-/literata-5.3.0.tgz",
+          "overridden": false
+        },
+        "@types/qrcode": {
+          "version": "1.5.6",
+          "resolved": "https://registry.npmjs.org/@types/qrcode/-/qrcode-1.5.6.tgz",
+          "overridden": false
+        },
+        "@types/react-dom": {
+          "version": "19.3.0",
+          "resolved": "https://registry.npmjs.org/@types/react-dom/-/react-dom-19.3.0.tgz",
+          "overridden": false
+        },
+        "@types/react": {
+          "version": "19.3.0",
+          "resolved": "https://registry.npmjs.org/@types/react/-/react-19.3.0.tgz",
+          "overridden": false
+        },
+        "@vitejs/plugin-react": {
+          "version": "5.2.0",
+          "resolved": "https://registry.npmjs.org/@vitejs/plugin-react/-/plugin-react-5.2.0.tgz",
+          "overridden": false
+        },
+        "idb-keyval": {
+          "version": "6.3.0",
+          "resolved": "https://registry.npmjs.org/idb-keyval/-/idb-keyval-6.3.0.tgz",
+          "overridden": false
+        },
+        "lucide-react": {
+          "version": "1.64.0",
+          "resolved": "https://registry.npmjs.org/lucide-react/-/lucide-react-1.64.0.tgz",
+          "overridden": false
+        },
+        "qrcode": {
+          "version": "1.5.4",
+          "resolved": "https://registry.npmjs.org/qrcode/-/qrcode-1.5.4.tgz",
+          "overridden": false
+        },
+        "react-dom": {
+          "version": "19.3.0",
+          "resolved": "https://registry.npmjs.org/react-dom/-/react-dom-19.3.0.tgz",
+          "overridden": false
+        },
+        "react": {
+          "version": "19.3.0",
+          "resolved": "https://registry.npmjs.org/react/-/react-19.3.0.tgz",
+          "overridden": false
+        },
+        "socket.io-client": {
+          "version": "4.8.4",
+          "resolved": "https://registry.npmjs.org/socket.io-client/-/socket.io-client-4.8.4.tgz",
+          "overridden": false
+        },
+        "sonner": {
+          "version": "2.0.8",
+          "resolved": "https://registry.npmjs.org/sonner/-/sonner-2.0.8.tgz",
+          "overridden": false
+        },
+        "sweetalert2": {
+          "version": "11.26.25",
+          "resolved": "https://registry.npmjs.org/sweetalert2/-/sweetalert2-11.26.25.tgz",
+          "overridden": false
+        },
+        "typescript": {
+          "version": "5.9.3"
+        },
+        "vite-plugin-pwa": {
+          "version": "1.3.0",
+          "resolved": "https://registry.npmjs.org/vite-plugin-pwa/-/vite-plugin-pwa-1.3.0.tgz",
+          "overridden": false
+        },
+        "vite": {
+          "version": "7.3.7",
+          "resolved": "https://registry.npmjs.org/vite/-/vite-7.3.7.tgz",
+          "overridden": false
+        }
+      }
+    },
+    "@ky-vien/server": {
+      "resolved": "file:../../server",
+      "overridden": false,
+      "dependencies": {
+        "@prisma/client": {
+          "version": "6.19.0",
+          "resolved": "https://registry.npmjs.org/@prisma/client/-/client-6.19.0.tgz",
+          "overridden": false
+        },
+        "@types/bcryptjs": {
+          "version": "2.4.6",
+          "resolved": "https://registry.npmjs.org/@types/bcryptjs/-/bcryptjs-2.4.6.tgz",
+          "overridden": false
+        },
+        "@types/cookie-parser": {
+          "version": "1.4.10",
+          "resolved": "https://registry.npmjs.org/@types/cookie-parser/-/cookie-parser-1.4.10.tgz",
+          "overridden": false
+        },
+        "@types/cors": {
+          "version": "2.8.19",
+          "resolved": "https://registry.npmjs.org/@types/cors/-/cors-2.8.19.tgz",
+          "overridden": false
+        },
+        "@types/express": {
+          "version": "5.0.6",
+          "resolved": "https://registry.npmjs.org/@types/express/-/express-5.0.6.tgz",
+          "overridden": false
+        },
+        "@types/jsonwebtoken": {
+          "version": "9.0.10",
+          "resolved": "https://registry.npmjs.org/@types/jsonwebtoken/-/jsonwebtoken-9.0.10.tgz",
+          "overridden": false
+        },
+        "@types/node": {
+          "version": "24.19.2"
+        },
+        "@types/nodemailer": {
+          "version": "7.0.12",
+          "resolved": "https://registry.npmjs.org/@types/nodemailer/-/nodemailer-7.0.12.tgz",
+          "overridden": false
+        },
+        "bcryptjs": {
+          "version": "3.0.3",
+          "resolved": "https://registry.npmjs.org/bcryptjs/-/bcryptjs-3.0.3.tgz",
+          "overridden": false
+        },
+        "cookie-parser": {
+          "version": "1.4.7",
+          "resolved": "https://registry.npmjs.org/cookie-parser/-/cookie-parser-1.4.7.tgz",
+          "overridden": false
+        },
+        "cors": {
+          "version": "2.8.6",
+          "resolved": "https://registry.npmjs.org/cors/-/cors-2.8.6.tgz",
+          "overridden": false
+        },
+        "dotenv": {
+          "version": "17.4.2",
+          "resolved": "https://registry.npmjs.org/dotenv/-/dotenv-17.4.2.tgz",
+          "overridden": false
+        },
+        "express-rate-limit": {
+          "version": "8.7.1",
+          "resolved": "https://registry.npmjs.org/express-rate-limit/-/express-rate-limit-8.7.1.tgz",
+          "overridden": false
+        },
+        "express": {
+          "version": "5.3.0",
+          "resolved": "https://registry.npmjs.org/express/-/express-5.3.0.tgz",
+          "overridden": false
+        },
+        "helmet": {
+          "version": "8.3.0",
+          "resolved": "https://registry.npmjs.org/helmet/-/helmet-8.3.0.tgz",
+          "overridden": false
+        },
+        "jsonwebtoken": {
+          "version": "9.0.3",
+          "resolved": "https://registry.npmjs.org/jsonwebtoken/-/jsonwebtoken-9.0.3.tgz",
+          "overridden": false
+        },
+        "nodemailer": {
+          "version": "10.3.1",
+          "resolved": "https://registry.npmjs.org/nodemailer/-/nodemailer-10.3.1.tgz",
+          "overridden": false
+        },
+        "prisma": {
+          "version": "6.19.0",
+          "resolved": "https://registry.npmjs.org/prisma/-/prisma-6.19.0.tgz",
+          "overridden": false
+        },
+        "socket.io": {
+          "version": "4.8.4",
+          "resolved": "https://registry.npmjs.org/socket.io/-/socket.io-4.8.4.tgz",
+          "overridden": false
+        },
+        "tsx": {
+          "version": "4.23.15",
+          "resolved": "https://registry.npmjs.org/tsx/-/tsx-4.23.15.tgz",
+          "overridden": false
+        },
+        "typescript": {
+          "version": "5.9.3"
+        },
+        "zod": {
+          "version": "4.6.7",
+          "resolved": "https://registry.npmjs.org/zod/-/zod-4.6.7.tgz",
+          "overridden": false
+        }
+      }
+    },
+    "@playwright/test": {
+      "version": "1.64.1",
+      "resolved": "https://registry.npmjs.org/@playwright/test/-/test-1.64.1.tgz",
+      "overridden": false
+    },
+    "@types/node": {
+      "version": "24.19.2",
+      "resolved": "https://registry.npmjs.org/@types/node/-/node-24.19.2.tgz",
+      "overridden": false
+    },
+    "@types/supertest": {
+      "version": "6.0.3",
+      "resolved": "https://registry.npmjs.org/@types/supertest/-/supertest-6.0.3.tgz",
+      "overridden": false
+    },
+    "concurrently": {
+      "version": "9.2.5",
+      "resolved": "https://registry.npmjs.org/concurrently/-/concurrently-9.2.5.tgz",
+      "overridden": false
+    },
+    "embedded-postgres": {
+      "version": "18.4.0-beta.17",
+      "resolved": "https://registry.npmjs.org/embedded-postgres/-/embedded-postgres-18.4.0-beta.17.tgz",
+      "overridden": false
+    },
+    "eslint": {
+      "version": "9.39.5",
+      "resolved": "https://registry.npmjs.org/eslint/-/eslint-9.39.5.tgz",
+      "overridden": false
+    },
+    "prettier": {
+      "version": "3.9.10",
+      "resolved": "https://registry.npmjs.org/prettier/-/prettier-3.9.10.tgz",
+      "overridden": false
+    },
+    "sharp": {
+      "version": "0.35.5",
+      "resolved": "https://registry.npmjs.org/sharp/-/sharp-0.35.5.tgz",
+      "overridden": false
+    },
+    "supertest": {
+      "version": "7.3.1",
+      "resolved": "https://registry.npmjs.org/supertest/-/supertest-7.3.1.tgz",
+      "overridden": false
+    },
+    "typescript-eslint": {
+      "version": "8.71.2",
+      "resolved": "https://registry.npmjs.org/typescript-eslint/-/typescript-eslint-8.71.2.tgz",
+      "overridden": false
+    },
+    "typescript": {
+      "version": "5.9.3",
+      "resolved": "https://registry.npmjs.org/typescript/-/typescript-5.9.3.tgz",
+      "overridden": false
+    },
+    "vitest": {
+      "version": "5.0.4",
+      "resolved": "https://registry.npmjs.org/vitest/-/vitest-5.0.4.tgz",
+      "overridden": false
+    }
+  }
+}

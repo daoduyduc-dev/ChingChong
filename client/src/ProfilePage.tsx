@@ -182,7 +182,7 @@ export function ProfilePage({
             </button>
           </form>
           <div className="actions">
-            {(["google", "facebook"] as const).map((provider) => (
+            {(["google"] as const).map((provider) => (
               <button
                 key={provider}
                 disabled={!config.oauth[provider]}
@@ -197,7 +197,7 @@ export function ProfilePage({
                   })
                 }
               >
-                Liên kết {provider === "google" ? "Google" : "Facebook"}
+                Liên kết Google
               </button>
             ))}
           </div>

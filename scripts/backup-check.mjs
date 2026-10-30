@@ -14,10 +14,15 @@ const bin = resolve(
   process.env.PG_TOOLS_BIN ??
     "node_modules/@embedded-postgres/windows-x64/native/bin",
 );
+const suffix = process.platform === "win32" ? ".exe" : "";
 const missing = ["pg_dump", "pg_restore"].filter(
-  (tool) => !existsSync(resolve(bin, tool + ".exe")),
+  (tool) => !existsSync(resolve(bin, tool + suffix)),
 );
-if (missing.length) {
+const dockerClient =
+  missing.length > 0 &&
+  spawnSync("docker", ["image", "inspect", "postgres:18"], { stdio: "ignore" })
+    .status === 0;
+if (missing.length && !dockerClient) {
   writeFileSync(
     "docs/implementation/backup-restore.json",
     JSON.stringify(
@@ -25,7 +30,7 @@ if (missing.length) {
         date: new Date().toISOString(),
         status: "BLOCKED",
         reason:
-          "PostgreSQL client tools absent; set PG_TOOLS_BIN to PostgreSQL 18+ client bin directory",
+          "Install PostgreSQL 18+ client tools (PG_TOOLS_BIN) or pull Docker postgres:18 for local rehearsal",
         missing,
         sourceUnchanged: true,
         restoreAttempted: false,
@@ -35,7 +40,7 @@ if (missing.length) {
     ),
   );
   console.error(
-    "Backup rehearsal BLOCKED: install PostgreSQL 18+ client tools and set PG_TOOLS_BIN. No database changed.",
+    "Backup rehearsal BLOCKED: provide PostgreSQL client tools or Docker postgres:18. No database changed.",
   );
   process.exit(1);
 }
@@ -47,8 +52,26 @@ const env = {
   PGPASSWORD: decodeURIComponent(url.password),
 };
 function run(tool, args) {
-  const r = spawnSync(resolve(bin, tool + ".exe"), args, {
-    env,
+  const command = dockerClient ? "docker" : resolve(bin, tool + suffix);
+  const parameters = dockerClient
+    ? [
+        "run",
+        "--rm",
+        "--mount",
+        `type=bind,source=${directory},target=/backups`,
+        ...["PGHOST", "PGPORT", "PGUSER", "PGPASSWORD"].flatMap((key) => [
+          "-e",
+          key,
+        ]),
+        "postgres:18",
+        tool,
+        ...args.map((arg) =>
+          arg === file ? "/backups/" + name + ".dump" : arg,
+        ),
+      ]
+    : args;
+  const r = spawnSync(command, parameters, {
+    env: dockerClient ? { ...env, PGHOST: "host.docker.internal" } : env,
     encoding: "utf8",
   });
   if (r.status !== 0)
@@ -86,22 +109,26 @@ try {
   const counts = [];
   for (const { tablename } of tables) {
     const identifier = '"' + tablename.replaceAll('"', '""') + '"';
-    const [a] = await source.$queryRawUnsafe(
-      "SELECT count(*)::int AS n FROM " + identifier,
-    );
-    const [b] = await restored.$queryRawUnsafe(
-      "SELECT count(*)::int AS n FROM " + identifier,
-    );
+    const query =
+      "SELECT count(*)::int AS n, md5(coalesce(string_agg(row_to_json(t)::text, E'\\n' ORDER BY row_to_json(t)::text), '')) AS digest FROM " +
+      identifier +
+      " t";
+    const [a] = await source.$queryRawUnsafe(query);
+    const [b] = await restored.$queryRawUnsafe(query);
     counts.push({
       table: tablename,
       source: a.n,
       restored: b.n,
-      match: a.n === b.n,
+      match: a.n === b.n && a.digest === b.digest,
+      contentDigestMatch: a.digest === b.digest,
     });
   }
   const report = {
     date: new Date().toISOString(),
     status: counts.every((c) => c.match) ? "PASS" : "FAIL",
+    client: dockerClient
+      ? "Docker postgres:18 client; host DB kept local"
+      : "native PostgreSQL client",
     scope:
       "Local logical dump restored into newly created database; source unchanged; counts checked while app idle; not production DR/RPO/RTO certification",
     targetDatabase: name,

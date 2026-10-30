@@ -1,5 +1,9 @@
 # Phụ thuộc nghiệm thu
 
+**Trạng thái hiện tại 30/10:** Render + Supabase là phương án đã chọn; chỉ dùng Google OAuth, Facebook không còn thuộc phạm vi triển khai. 87/87 unit/integration tests, lint và build PASS. Render public và Google thật chưa nghiệm thu. Các bảng phía dưới là lịch sử.
+
+**Checkpoint trước đó 30/10:** Docker và backup/restore local đã PASS, không còn blocked bởi daemon/client tools. Supabase đã kết nối chỉ đọc thành công và có đủ 4 migrations; chưa có host/domain/deploy credentials, OAuth/SMTP/TURN thật hoặc hardware để nghiệm thu. Chromium/Firefox/WebKit smoke đã PASS, không thay cho thiết bị/browser thực. Full dependency audit còn 4 low từ upstream deepmerge. Danh sách đầu vào P0/P1/P2 đầy đủ tại `release-report-2026-10-30.md`; bảng cũ phía dưới giữ làm lịch sử.
+
 Cập nhật 16/10: xem `final-readiness-report.md`. OAuth có mock-provider tests hai provider; SMTP đã nhận qua TCP local và kiểm tra hash/reset/failure. Đây không thay thế dịch vụ thật. Admin UI và User IndexedDB offline đã E2E PASS. Backup/restore local **BLOCKED** vì thiếu `pg_dump`/`pg_restore`; cần PostgreSQL 18+ client tools, `PG_TOOLS_BIN` rồi chạy `node scripts/backup-check.mjs`. Chưa có restore hoặc thay đổi DB từ script này.
 
 | Phụ thuộc | Trạng thái | Cần cung cấp/kiểm chứng |

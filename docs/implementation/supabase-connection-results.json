@@ -1,0 +1,16 @@
+{
+  "date": "2026-10-30T13:10:48.500Z",
+  "connection": "PASS",
+  "provider": "Supabase PostgreSQL",
+  "readOnly": true,
+  "schemaMigrations": "PASS",
+  "applied": [
+    "202610140001_initial",
+    "202610140002_invariants",
+    "202610290001_browsing",
+    "202610290002_history_indexes"
+  ],
+  "pending": [],
+  "writesPerformed": false,
+  "realGoogleOAuth": "BLOCKED: credentials not configured"
+}

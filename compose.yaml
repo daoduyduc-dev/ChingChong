@@ -7,7 +7,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD}
       POSTGRES_DB: kyvien
     ports:
-      - "127.0.0.1:54329:5432"
+      - "127.0.0.1:${POSTGRES_PORT:-54329}:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
     healthcheck:
@@ -18,7 +18,7 @@ services:
     build: .
     restart: unless-stopped
     ports:
-      - "127.0.0.1:3002:3002"
+      - "127.0.0.1:${BACKEND_PORT:-3002}:3002"
     depends_on:
       postgres:
         condition: service_healthy
@@ -35,8 +35,6 @@ services:
       SMTP_FROM: ${SMTP_FROM:-}
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
       GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
-      FACEBOOK_CLIENT_ID: ${FACEBOOK_CLIENT_ID:-}
-      FACEBOOK_CLIENT_SECRET: ${FACEBOOK_CLIENT_SECRET:-}
       TURN_URL: ${TURN_URL:-}
       TURN_USERNAME: ${TURN_USERNAME:-}
       TURN_CREDENTIAL: ${TURN_CREDENTIAL:-}
@@ -46,5 +44,15 @@ services:
       timeout: 5s
       start_period: 30s
       retries: 3
+  frontend:
+    build:
+      context: .
+      dockerfile: deploy/frontend.Dockerfile
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${FRONTEND_PORT:-8080}:80"
+    depends_on:
+      backend:
+        condition: service_healthy
 volumes:
   postgres-data:

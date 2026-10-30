@@ -1,0 +1,29 @@
+# One application service. PostgreSQL stays on the existing Supabase project.
+services:
+  - type: web
+    name: ky-vien
+    runtime: node
+    plan: free
+    region: singapore
+    numInstances: 1
+    autoDeployTrigger: off
+    buildCommand: npm ci && npm run db:generate && npm run build
+    startCommand: npm run db:migrate && node --import tsx server/src/index.ts
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: 24.22.1
+      - key: NODE_ENV
+        value: production
+      - key: API_HOST
+        value: 0.0.0.0
+      - key: SERVE_CLIENT
+        value: "true"
+      - key: TRUST_PROXY
+        value: "1"
+      - key: JWT_SECRET
+        generateValue: true
+      - key: DATABASE_URL
+        sync: false
+      # Add GOOGLE_CLIENT_ID/GOOGLE_CLIENT_SECRET in the dashboard after the
+      # first deploy provides the exact HTTPS URL for the Google callback.

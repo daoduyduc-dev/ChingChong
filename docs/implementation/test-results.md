@@ -1,5 +1,7 @@
 # Kết quả kiểm thử — 15/10/2026
 
+> **Mới nhất 30/10:** xem [release report](release-report-2026-10-30.md): 76/76 logic/API, 23/23 UI, 8/8 container acceptance và 3/3 browser smoke; backup/restore và container restart PASS. Runtime audit 0, full tree 4 low. Các số cũ phía dưới là checkpoint lịch sử; Supabase/public/provider/hardware chưa nghiệm thu.
+
 > Checkpoint lịch sử. Lượt mới **16/10/2026**: **63/63 unit/integration, 8/8 E2E PASS**, typecheck/lint/build/generate/migrations/audit PASS. JSON phản ánh lượt mới; xem [final-readiness-report.md](final-readiness-report.md) cho lỗi đã sửa, giới hạn và BLOCKED. Số 59/6 phía dưới là kết quả cũ.
 
 **PARTIALLY COMPLETE**. Source đã tích hợp local; chưa nghiệm thu tất cả dịch vụ/thiết bị thật.

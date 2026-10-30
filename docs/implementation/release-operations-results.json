@@ -1,0 +1,33 @@
+{
+  "date": "2026-10-30T12:33:08.680Z",
+  "scope": "Local Compose cold restart with persistent volume; original user database is not used; real WebSocket-only connection through Nginx; terminal/SAVED rows checked, active recovery separately unit-tested",
+  "status": "PASS",
+  "health": 200,
+  "websocketUpgrade": true,
+  "persistentData": [
+    {
+      "table": "User",
+      "before": 15,
+      "after": 15,
+      "contentUnchanged": true
+    },
+    {
+      "table": "Identity",
+      "before": 0,
+      "after": 0,
+      "contentUnchanged": true
+    },
+    {
+      "table": "Move",
+      "before": 9,
+      "after": 9,
+      "contentUnchanged": true
+    },
+    {
+      "table": "Match",
+      "before": 3,
+      "after": 3,
+      "contentUnchanged": true
+    }
+  ]
+}

@@ -1,11 +1,94 @@
 {
-  "date": "2026-10-16T06:22:07.520Z",
-  "status": "BLOCKED",
-  "reason": "PostgreSQL client tools absent; set PG_TOOLS_BIN to PostgreSQL 18+ client bin directory",
-  "missing": [
-    "pg_dump",
-    "pg_restore"
-  ],
-  "sourceUnchanged": true,
-  "restoreAttempted": false
+  "date": "2026-10-30T12:21:58.754Z",
+  "status": "PASS",
+  "client": "Docker postgres:18 client; host DB kept local",
+  "scope": "Local logical dump restored into newly created database; source unchanged; counts checked while app idle; not production DR/RPO/RTO certification",
+  "targetDatabase": "kyvien_restoreqa_1793362912357",
+  "backupFile": ".local/backups/kyvien_restoreqa_1793362912357.dump",
+  "tables": [
+    {
+      "table": "Audit",
+      "source": 10,
+      "restored": 10,
+      "match": true,
+      "contentDigestMatch": true
+    },
+    {
+      "table": "Friend",
+      "source": 0,
+      "restored": 0,
+      "match": true,
+      "contentDigestMatch": true
+    },
+    {
+      "table": "Identity",
+      "source": 0,
+      "restored": 0,
+      "match": true,
+      "contentDigestMatch": true
+    },
+    {
+      "table": "Match",
+      "source": 14,
+      "restored": 14,
+      "match": true,
+      "contentDigestMatch": true
+    },
+    {
+      "table": "Move",
+      "source": 40,
+      "restored": 40,
+      "match": true,
+      "contentDigestMatch": true
+    },
+    {
+      "table": "Notification",
+      "source": 48,
+      "restored": 48,
+      "match": true,
+      "contentDigestMatch": true
+    },
+    {
+      "table": "Report",
+      "source": 0,
+      "restored": 0,
+      "match": true,
+      "contentDigestMatch": true
+    },
+    {
+      "table": "ResetToken",
+      "source": 0,
+      "restored": 0,
+      "match": true,
+      "contentDigestMatch": true
+    },
+    {
+      "table": "Room",
+      "source": 32,
+      "restored": 32,
+      "match": true,
+      "contentDigestMatch": true
+    },
+    {
+      "table": "Session",
+      "source": 66,
+      "restored": 66,
+      "match": true,
+      "contentDigestMatch": true
+    },
+    {
+      "table": "User",
+      "source": 42,
+      "restored": 42,
+      "match": true,
+      "contentDigestMatch": true
+    },
+    {
+      "table": "_prisma_migrations",
+      "source": 2,
+      "restored": 2,
+      "match": true,
+      "contentDigestMatch": true
+    }
+  ]
 }

@@ -2,6 +2,8 @@
 
 React/Vite/TypeScript, Express/Socket.IO và PostgreSQL/Prisma. Dự án dùng **npm workspaces**, một repository và một `package-lock.json` tại thư mục gốc.
 
+**Phương án đã chốt:** Render Web Service chạy chung React + Express/Socket.IO, kết nối Supabase PostgreSQL qua Prisma, social login chỉ Google. Không tạo Render Postgres. Xem [hướng dẫn deploy Render + Supabase](docs/DEPLOY_RENDER.md), cấu hình ở `render.yaml`. Railway là phương án dự phòng, hiện bị chặn đăng ký tài khoản mới.
+
 Luồng tài khoản: đăng ký thành công → giao diện đăng nhập → nhập mật khẩu và đăng nhập → sử dụng tài khoản. API đăng ký chỉ tạo tài khoản, không cấp token/cookie hoặc phiên đăng nhập. Giao diện điền sẵn username sau đăng ký, xóa ô mật khẩu và thông báo thành công. Việc gộp dữ liệu Guest được hỏi ở bước đăng nhập.
 
 ## Cấu trúc dự án
@@ -37,7 +39,7 @@ QLDA/
 └── compose.yaml
 ```
 
-FE → proxy `/api`, `/socket.io` → BE → Prisma → Supabase PostgreSQL. AI Worker chạy trong trình duyệt; thuật toán AI và luật cờ nằm trong `shared/`. Ván AI lưu IndexedDB theo User hoặc sessionStorage cho Guest; không lưu vào Supabase.
+Trên Render: FE + `/api` + `/socket.io` cùng một Web Service → Prisma → Supabase PostgreSQL. Dev local dùng Vite proxy. AI Worker và luật cờ nằm trong shared; ván AI lưu IndexedDB/sessionStorage trong trình duyệt.
 
 ## Cài đặt và cấu hình
 
@@ -50,16 +52,16 @@ if (-not (Test-Path server/.env)) { Copy-Item server/.env.example server/.env }
 npm run db:generate
 ```
 
-Secrets của dự án cũ đã được chuyển từ `.env` ở gốc sang **`server/.env`**. Không cần chép lại. Shell environment hoặc biến của nền tảng deploy có ưu tiên cao hơn file này.
+Backend nạp `server/.env` khi chạy local; file secrets không đi kèm Git. Render dùng environment variables trên dashboard, không cần chép .env vào repository. Shell/deployment environment ưu tiên cao hơn file local.
 
 Cấu hình trong `server/.env`:
 
-- `DATABASE_URL`: connection string PostgreSQL Supabase hoặc DB local. Mật khẩu trong URL phải URI-encoded; không đưa URL này vào code FE.
+- `DATABASE_URL`: điền Supabase Session pooler URL trên Render; local dùng giá trị trong server/.env.example. Không đưa credentials vào FE.
 - `JWT_SECRET`: chuỗi ngẫu nhiên ít nhất 32 ký tự, không dùng placeholder.
 - `APP_URL=http://127.0.0.1:5174`
 - `PORT=3002`, `API_HOST=127.0.0.1`
 
-Prisma kết nối trực tiếp PostgreSQL, không cần Supabase anon/service-role key. FE không đọc `server/.env`.
+Prisma kết nối PostgreSQL; FE không đọc server/.env. Render tự cấp PORT. SERVE_CLIENT=true bật phục vụ client/dist tại Backend, API_HOST=0.0.0.0 cho phép Render định tuyến.
 
 Nếu database chưa có schema hoặc có migration mới:
 
@@ -67,7 +69,7 @@ Nếu database chưa có schema hoặc có migration mới:
 npm run db:migrate
 ```
 
-Lệnh này áp dụng migration lên DB của BE; sao lưu trước khi chạy với dữ liệu thật. Không reset DB. Database Supabase hiện tại đã áp dụng các migration của dự án; chỉ cần chạy lại khi có migration mới.
+Lệnh áp dụng migration lên DB đã cấu hình; backup trước khi chạy với dữ liệu thật, không reset. Render chạy migrate deploy vào Supabase đã chọn, không tự tạo database thay thế.
 
 ## Chạy phát triển — một lệnh
 
@@ -201,12 +203,35 @@ docker compose --env-file server/.env up --build
 
 ## Cấu hình dịch vụ
 
-- Google/Facebook: điền CLIENT_ID/CLIENT_SECRET; callback chính xác `${APP_URL}/api/auth/oauth/google/callback` hoặc `/facebook/callback`. Google dùng state + PKCE. Không auto merge theo email. Đăng nhập tài khoản cũ rồi liên kết provider từ Hồ sơ. Cookie OAuth dùng SameSite=Lax cho top-level callback; refresh cookie HttpOnly/Strict, Secure khi APP_URL HTTPS.
+- Google: cấu hình GOOGLE_CLIENT_ID và GOOGLE_CLIENT_SECRET trên Render; callback `${APP_URL}/api/auth/oauth/google/callback`. Google dùng state + PKCE; link tài khoản rõ ràng, không tự merge theo email. Facebook không còn UI/config/routes được bật; dữ liệu Identity lịch sử không bị xóa.
 - SMTP: HOST/PORT/USER/PASS/FROM. Không cấu hình sẽ báo rõ chưa có dịch vụ; token reset hash trong DB, dùng một lần, hạn 30 phút. Phản hồi không tiết lộ email có tồn tại. Kiểm tra việc thư thật tới hộp thư trước nghiệm thu.
 - WebRTC: STUN mặc định, TURN_URL/USERNAME/CREDENTIAL nếu cần NAT relay. Chỉ kỳ thủ có consent được lấy cấu hình media. Không recording. Kiểm tra với camera thật, HTTPS và hai mạng khác nhau.
 - Admin: đăng ký tài khoản bình thường rồi operator chạy `node scripts/admin.mjs email-da-dang-ky`; đăng nhập lại. Không có tài khoản/mật khẩu Admin mẫu.
 
 ## Docker và triển khai
+
+**Deploy chính cho đồ án:** [Render Web Service + Supabase](docs/DEPLOY_RENDER.md). Các phương án Compose dưới đây là tùy chọn rehearsal/hosting khác, không cần dùng khi tạo Render Blueprint.
+
+### Bản container local đã kiểm chứng
+
+```powershell
+node scripts/deploy-local.mjs
+node scripts/release-acceptance.mjs
+npx playwright test --config tests/deploy/browsers.config.ts
+node scripts/release-operations.mjs
+```
+
+Helper giữ secrets trong `.local/release.env` (ignored), tự tạo khi chưa có deployment; không ghi đè password của volume đang tồn tại. FE cổng 5180, BE 3003 và DB 54330 đều bind loopback. Đổi các cổng trong `.local/release.env` nếu bị chiếm; không dừng dịch vụ khác để lấy cổng. Bộ acceptance dùng hai batch để giữ nguyên auth rate-limit khi nhiều browser cùng IP; operations test khởi động lại toàn bộ stack local, vì vậy chạy khi không có người đang chơi. Đây là lệnh riêng cho môi trường thử, không chạy vào DB Supabase.
+
+Dừng stack bằng `docker compose -p kyvien-release --env-file .local/release.env stop`; dữ liệu volume và env được giữ. Không dùng `down -v` hoặc xóa `.local/release.env` vì sẽ mất dữ liệu hoặc credentials của deployment. Hướng dẫn chuyển lên hosting với Supabase nằm trong [release runbook](docs/implementation/release-runbook.md).
+
+### Tùy chọn PostgreSQL ngoài Render
+
+```powershell
+docker compose -f compose.external-db.yaml --env-file server/.env up -d --build --wait
+```
+
+File này chỉ có FE/BE, không tạo hoặc thay thế database bằng local PostgreSQL. Cần `DATABASE_URL`, `JWT_SECRET`, `APP_URL` đúng môi trường; sao lưu database và kiểm tra migration trước khi chạy vì Backend chạy `migrate deploy` lúc khởi động. Host public cần TLS reverse proxy và firewall theo runbook. Lệnh trên mới kiểm tra cấu hình, chưa chạy với Supabase thật do thiếu secrets.
 
 Kết quả hardening 16/10: [final-readiness-report](docs/implementation/final-readiness-report.md). Hướng dẫn HTTPS/proxy, secrets, backup/restore, rollback và dịch vụ thật: [deployment-runbook](docs/implementation/deployment-runbook.md). Mẫu `deploy/nginx.conf.example` chưa chạy trên host đích. Rehearsal local dùng `node scripts/backup-check.mjs`; cần PostgreSQL 18+ client tools và `PG_TOOLS_BIN` trỏ thư mục chứa `pg_dump.exe`/`pg_restore.exe`. Thiếu tools sẽ BLOCKED trước khi thay đổi DB.
 

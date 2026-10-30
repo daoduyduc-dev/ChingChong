@@ -1,0 +1,6 @@
+{
+  "date": "2026-10-30T13:09:34.125Z",
+  "status": "PASS",
+  "scope": "One Render Web Service, external Supabase DATABASE_URL; no Render Postgres provisioned",
+  "errors": null
+}
