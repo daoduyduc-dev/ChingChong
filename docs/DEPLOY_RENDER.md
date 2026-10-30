@@ -25,7 +25,7 @@ Blueprint chỉ tạo một Web Service. Trong Supabase, lấy đúng **Connect 
 | `TRUST_PROXY=1` | Một proxy Render, không thêm Nginx trong Web Service |
 | Auto deploy | Tắt; Manual Deploy khi chủ động cập nhật |
 
-Build: `npm ci && npm run db:generate && npm run build`.
+Build: `npm ci --include=dev && npm run db:generate && npm run build`.
 
 Start: `npm run db:migrate && node --import tsx server/src/index.ts`.
 
