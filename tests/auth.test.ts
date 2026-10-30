@@ -1,33 +1,40 @@
 import { beforeAll, afterAll, describe, it, expect } from "vitest";
 import request from "supertest";
+import { registerAndLogin } from "./helpers/auth";
 import { randomUUID } from "node:crypto";
-import { db } from "../server/db";
-import { makeApp } from "../server/app";
-import { hash } from "../server/auth";
+import { db } from "../server/src/db";
+import { makeApp } from "../server/src/app";
+import { hash } from "../server/src/auth";
 import jwt from "jsonwebtoken";
-import { secret } from "../server/auth";
+import { secret } from "../server/src/auth";
 const { app, io, http } = makeApp();
+// Fixture creation is a separate loopback client; behavioral scenarios keep the real auth budget.
+app.set("trust proxy", "loopback");
 const prefix = "auth_" + randomUUID().slice(0, 8);
 let a: any, b: any;
 const users: string[] = [];
 beforeAll(async () => {
   a = (
-    await request(app)
-      .post("/api/auth/register")
-      .send({
+    await registerAndLogin(
+      app,
+      {
         username: prefix + "a",
         email: prefix + "a@tests.invalid",
         password: "Chess12345",
-      })
+      },
+      "127.0.2.1",
+    )
   ).body;
   b = (
-    await request(app)
-      .post("/api/auth/register")
-      .send({
+    await registerAndLogin(
+      app,
+      {
         username: prefix + "b",
         email: prefix + "b@tests.invalid",
         password: "Chess12345",
-      })
+      },
+      "127.0.2.1",
+    )
   ).body;
   users.push(a.actor.id, b.actor.id);
 });

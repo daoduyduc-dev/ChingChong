@@ -3,8 +3,8 @@ import ts from "typescript-eslint";
 export default ts.config(
   {
     ignores: [
-      "dist/**",
-      "node_modules/**",
+      "**/dist/**",
+      "**/node_modules/**",
       ".local/**",
       "test-results/**",
       "playwright-report/**",

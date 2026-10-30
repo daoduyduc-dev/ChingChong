@@ -8,6 +8,7 @@ export type Actor = {
   avatar?: string;
 };
 export type RoomState = {
+  mode?: "PUBLIC" | "PRIVATE" | "RANDOM" | "UNKNOWN";
   serverTime?: number;
   id: string;
   code: string;
@@ -33,6 +34,7 @@ export type MatchRequest = {
   expiresAt: number;
 };
 export type MatchState = {
+  mode?: "PUBLIC" | "PRIVATE" | "RANDOM" | "UNKNOWN";
   serverTime?: number;
   chatVersion?: number;
   videoSessionId?: string;

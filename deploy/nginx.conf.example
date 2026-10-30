@@ -15,13 +15,13 @@ server {
     ssl_certificate /etc/letsencrypt/live/chess.example.com/fullchain.pem;
     ssl_certificate_key /etc/letsencrypt/live/chess.example.com/privkey.pem;
     ssl_protocols TLSv1.2 TLSv1.3;
-    root /srv/kyvien/current/dist;
+    root /srv/kyvien/current/client/dist;
     client_max_body_size 1m;
     add_header X-Content-Type-Options nosniff always;
     add_header Referrer-Policy same-origin always;
     add_header Permissions-Policy "camera=(self), microphone=(self)" always;
     location /api/ {
-        proxy_pass http://127.0.0.1:3001;
+        proxy_pass http://127.0.0.1:3002;
         proxy_set_header Host $host;
         proxy_set_header X-Forwarded-Proto $scheme;
         proxy_set_header X-Forwarded-For $remote_addr;
@@ -30,7 +30,7 @@ server {
         access_log off;
     }
     location /socket.io/ {
-        proxy_pass http://127.0.0.1:3001;
+        proxy_pass http://127.0.0.1:3002;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection $connection_upgrade;

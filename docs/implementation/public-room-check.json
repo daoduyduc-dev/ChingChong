@@ -1,0 +1,7 @@
+{
+  "date": "2026-10-29T03:40:06.578Z",
+  "environment": "FE 5174 -> BE 3002 -> Supabase, Chrome, two browser contexts",
+  "createMs": 3501,
+  "publicJoinMs": 3996,
+  "status": "PASS"
+}

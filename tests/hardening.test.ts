@@ -2,8 +2,8 @@ import { it, expect, afterEach, afterAll, vi } from "vitest";
 import { createServer } from "node:net";
 import { randomUUID } from "node:crypto";
 import type { Request, Response } from "express";
-import { AuthService, hash } from "../server/auth";
-import { db } from "../server/db";
+import { AuthService, hash } from "../server/src/auth";
+import { db } from "../server/src/db";
 
 const auth = new AuthService();
 const ids: string[] = [];
@@ -110,8 +110,12 @@ it("OAuth Google PKCE and explicit linking reject email takeover and foreign ide
   vi.stubEnv("GOOGLE_CLIENT_ID", "local-test-client");
   vi.stubEnv("GOOGLE_CLIENT_SECRET", "local-test-secret");
   const name = "hard_" + randomUUID().slice(0, 8);
-  const account = await auth.register(
+  await auth.register(
     { username: name, email: name + "@tests.invalid", password: "Chess12345" },
+    response().res,
+  );
+  const account = await auth.login(
+    { identifier: name, password: "Chess12345" },
     response().res,
   );
   ids.push(account.actor.id);
@@ -157,12 +161,16 @@ it("OAuth Google PKCE and explicit linking reject email takeover and foreign ide
   );
   expect(fetcher.mock.calls[0][1].body.get("code_verifier")).toBeTruthy();
   const otherName = "hard_" + randomUUID().slice(0, 8);
-  const other = await auth.register(
+  await auth.register(
     {
       username: otherName,
       email: otherName + "@tests.invalid",
       password: "Chess12345",
     },
+    response().res,
+  );
+  const other = await auth.login(
+    { identifier: otherName, password: "Chess12345" },
     response().res,
   );
   ids.push(other.actor.id);
@@ -205,8 +213,12 @@ it("Reset mail crosses a real local SMTP socket, stores only hash, and delivery 
   vi.stubEnv("SMTP_USER", "");
   const name = "smtp_" + randomUUID().slice(0, 8),
     email = name + "@tests.invalid";
-  const account = await auth.register(
+  await auth.register(
     { username: name, email, password: "Chess12345" },
+    response().res,
+  );
+  const account = await auth.login(
+    { identifier: name, password: "Chess12345" },
     response().res,
   );
   ids.push(account.actor.id);

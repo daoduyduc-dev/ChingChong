@@ -1,8 +1,9 @@
 import { it, expect, afterAll } from "vitest";
 import request from "supertest";
+import { registerAndLogin } from "./helpers/auth";
 import { randomUUID } from "node:crypto";
-import { makeApp } from "../server/app";
-import { db } from "../server/db";
+import { makeApp } from "../server/src/app";
+import { db } from "../server/src/db";
 const { app, io, http } = makeApp();
 const ids: string[] = [];
 afterAll(async () => {
@@ -19,13 +20,11 @@ it("Admin handles accounts/reports with audit, never accepts arbitrary match res
   const users = [];
   for (let i = 0; i < 2; i++) {
     const username = "adminqa_" + randomUUID().slice(0, 8);
-    const r = await request(app)
-      .post("/api/auth/register")
-      .send({
-        username,
-        email: username + "@tests.invalid",
-        password: "Chess12345",
-      });
+    const r = await registerAndLogin(app, {
+      username,
+      email: username + "@tests.invalid",
+      password: "Chess12345",
+    });
     users.push(r.body);
     ids.push(r.body.actor.id);
   }

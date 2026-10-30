@@ -1,4 +1,4 @@
-import "dotenv/config";
+import "../server/env.mjs";
 import { PrismaClient } from "@prisma/client";
 import { spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";

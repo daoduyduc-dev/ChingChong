@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
 import { randomUUID } from "node:crypto";
-import { db } from "../server/db";
-import { GameService } from "../server/game";
+import { db } from "../server/src/db";
+import { GameService } from "../server/src/game";
 import type { Actor, MatchState } from "../shared/domain";
 let now = 1000000;
 const game = new GameService(() => now);

@@ -1,10 +1,11 @@
 import { beforeAll, afterAll, it, expect } from "vitest";
 import request from "supertest";
+import { registerAndLogin } from "./helpers/auth";
 import { io as client, type Socket } from "socket.io-client";
 import { randomUUID } from "node:crypto";
-import { makeApp } from "../server/app";
-import { GameService } from "../server/game";
-import { db } from "../server/db";
+import { makeApp } from "../server/src/app";
+import { GameService } from "../server/src/game";
+import { db } from "../server/src/db";
 import { moves } from "../shared/chess";
 import { writeFileSync } from "node:fs";
 let now = 1000000;
@@ -45,13 +46,11 @@ beforeAll(async () => {
   url = "http://127.0.0.1:" + address.port;
   for (let i = 0; i < 3; i++) {
     const name = "sock_" + randomUUID().slice(0, 8);
-    const r = await request(app)
-      .post("/api/auth/register")
-      .send({
-        username: name,
-        email: name + "@tests.invalid",
-        password: "Chess12345",
-      });
+    const r = await registerAndLogin(app, {
+      username: name,
+      email: name + "@tests.invalid",
+      password: "Chess12345",
+    });
     accounts.push(r.body);
   }
 });

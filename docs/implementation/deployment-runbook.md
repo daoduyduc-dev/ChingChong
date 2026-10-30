@@ -1,14 +1,16 @@
 # Triển khai và nghiệm thu thực tế — 16/10/2026
 
+Cập nhật cấu trúc 29/10/2026: npm workspaces `client/` và `server/`, FE build tại `client/dist/`, mã BE tại `server/src/`, schema tại `server/prisma/`. Secrets local đặt trong `server/.env` (production nên dùng biến môi trường); BE hiện dùng cổng 3002. Tài liệu nghiệm thu cũ không thay thế hướng dẫn chạy hiện tại trong README.
+
 Trạng thái hạ tầng public: **NOT RUN**. Không có DNS/cloud/public deployment nào được tạo trong lượt này. File `deploy/nginx.conf.example` là mẫu cần thay domain/chứng chỉ/path rồi kiểm tra `nginx -t` trên máy đích. Docker daemon local không có: **BLOCKED**.
 
 ## Chuẩn bị release
 
-1. Chọn một host, một Backend instance, Node 24, PostgreSQL persistent, HTTPS reverse proxy. Workspace hiện chưa có `.git`; cần kho phiên bản hoặc release archive có checksum để rollback có định danh. Không dùng `.local/postgres` development làm production.
+1. Chọn một host, một Backend instance, Node 24, PostgreSQL persistent, HTTPS reverse proxy. Dùng commit Git hoặc release archive có checksum để rollback có định danh. Không dùng `.local/postgres` development làm production.
 2. Chạy `npm ci`, `npm run db:generate`, `npm run typecheck`, `npm run lint`, `npm test`, `npm run build`. Test DB riêng, không trỏ test runner vào DB production. Lưu lockfile và kết quả kiểm thử cùng release. Kiểm tra `npm audit` tại thời điểm release.
 3. Đặt secrets riêng ngoài release: DATABASE_URL có password URI-encoded, JWT_SECRET ngẫu nhiên, APP_URL HTTPS chính xác, API_HOST loopback, TRUST_PROXY=1 chỉ khi có đúng một proxy kiểm soát. Không ghi secrets vào log, source, ảnh hoặc chat. Chỉ mở cổng 443/80; không expose DB hoặc API bypass proxy.
 4. Sao lưu DB bằng `pg_dump -Fc` với credentials qua secret store/PGPASSFILE; không để password trên command line. Kiểm tra restore vào DB mới trước migrate. `prisma migrate deploy` chỉ dùng migration đã review; không `reset`, không `db push --accept-data-loss`. Hai migration hiện có là additive. Snapshot/backup trước mọi migration vẫn bắt buộc.
-5. Copy `dist/` vào thư mục release mới; trỏ Nginx tới release; proxy `/api/` và `/socket.io/` như mẫu. Backend chạy bằng supervisor với restart policy, graceful SIGTERM, log rotation, quyền không root. Compose có healthchecks; đây chưa là bằng chứng container đã chạy.
+5. Copy `client/dist/` vào thư mục release mới; trỏ Nginx tới release; proxy `/api/` và `/socket.io/` tới BE 3002 như mẫu. Backend chạy `npm start` từ gốc hoặc từ `server/`, bằng supervisor với restart policy, graceful SIGTERM, log rotation, quyền không root. Compose dùng `docker compose --env-file server/.env up --build` và có healthchecks; đây chưa là bằng chứng container đã chạy.
 6. Chạy `/api/health` qua localhost và HTTPS: phải 200 khi DB sẵn sàng. Thử WebSocket upgrade qua HTTPS; không chấp nhận chỉ polling. Kiểm tra CORS đúng origin, secure/HttpOnly cookies, request rate-limit phân biệt IP qua proxy, không log query reset/OAuth. API health lỗi DB trả lỗi chung, không DSN/SQL.
 
 ## Credentials và nghiệm thu dịch vụ

@@ -1,7 +1,7 @@
 import { test, expect, type Page } from "@playwright/test";
 import { randomUUID } from "node:crypto";
 import { moves } from "../../shared/chess";
-import "dotenv/config";
+import "../../server/env.mjs";
 import { PrismaClient } from "@prisma/client";
 async function register(page: Page, name: string) {
   await page.goto("/");
@@ -14,6 +14,17 @@ async function register(page: Page, name: string) {
   await page.getByLabel(/^Mật khẩu/).fill("Chess12345");
   await page
     .getByRole("button", { name: "Tạo tài khoản", exact: true })
+    .click();
+  await expect(page.getByRole("dialog")).toBeVisible();
+  await expect(page.getByLabel("Email hoặc username")).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Đăng xuất", exact: true }),
+  ).toHaveCount(0);
+  await page.getByLabel("Email hoặc username").fill(name);
+  await page.getByLabel(/^Mật khẩu/).fill("Chess12345");
+  await page
+    .getByRole("dialog")
+    .getByRole("button", { name: "Đăng nhập", exact: true })
     .click();
   await expect(page.getByRole("dialog")).toHaveCount(0);
   await expect(page.locator(".connection")).toContainText("Trực tuyến");
@@ -33,7 +44,9 @@ test("Admin browser manages only its new QA account target; profile privacy sett
     .getByRole("checkbox", { name: "Ẩn lịch sử với người khác" })
     .check();
   await page.getByRole("button", { name: "Lưu hồ sơ", exact: true }).click();
-  await expect(page.locator(".notice")).toContainText("Đã cập nhật hồ sơ.");
+  await expect(
+    page.locator('[data-sonner-toast]:not([data-type="loading"])'),
+  ).toContainText("Đã cập nhật hồ sơ.");
   await page.reload();
   await page.getByRole("button", { name: /Hồ sơ/, exact: false }).click();
   await expect(
@@ -55,28 +68,33 @@ test("Admin browser manages only its new QA account target; profile privacy sett
     await page.reload();
     await page.getByRole("button", { name: /Quản trị/ }).click();
     await expect(
-      page.getByRole("heading", { name: "Quản trị tối thiểu" }),
+      page.getByRole("heading", { name: "Quản trị", exact: true }),
     ).toBeVisible();
-    const row = page
-      .locator(".friend-row")
-      .filter({ hasText: new RegExp("^" + name + " ·") });
-    await expect(row).toContainText("ACTIVE");
+    await page.getByLabel("Tìm kiếm quản trị").fill(target.username);
+    await page.getByRole("button", { name: "Tìm kiếm", exact: true }).click();
     const targetRow = page
-      .locator(".friend-row")
+      .locator(".admin-data-row")
       .filter({ hasText: target.username });
-    page.once("dialog", (dialog) => dialog.accept());
     await targetRow
       .getByRole("button", { name: "BANNED", exact: true })
       .click();
-    await expect(targetRow.locator("span").first()).toContainText("BANNED");
-    page.once("dialog", (dialog) => dialog.accept());
+    await page.locator(".swal2-confirm").click();
+    await expect(targetRow).toContainText("BANNED");
+    await expect(
+      targetRow.getByRole("button", { name: "BANNED", exact: true }),
+    ).toBeDisabled();
     await targetRow
       .getByRole("button", { name: "ACTIVE", exact: true })
       .click();
-    await expect(targetRow.locator("span").first()).toContainText("ACTIVE");
+    await page.locator(".swal2-confirm").click();
+    await expect(
+      targetRow.getByRole("button", { name: "ACTIVE", exact: true }),
+    ).toBeDisabled();
+    await page.getByRole("button", { name: "Báo cáo", exact: true }).click();
     await expect(
       page.getByRole("heading", { name: "Báo cáo", exact: true }),
     ).toBeVisible();
+    await page.getByRole("button", { name: "Audit log", exact: true }).click();
     await expect(
       page.getByRole("heading", { name: "Audit log" }),
     ).toBeVisible();
@@ -247,7 +265,7 @@ test("two independent browsers: register, private room, move, chat, WebRTC conse
     .locator(".request")
     .getByRole("button", { name: "Đồng ý", exact: true })
     .click();
-  await expect(a.locator(".video small")).toContainText(/connected|Đã kết nối/);
+  await expect(a.locator(".video-status")).toContainText(/connected|Đã kết nối/);
   await a.getByRole("button", { name: "Bật camera", exact: true }).click();
   await expect
     .poll(() =>
@@ -282,7 +300,7 @@ test("two independent browsers: register, private room, move, chat, WebRTC conse
     .locator(".request")
     .getByRole("button", { name: "Đồng ý", exact: true })
     .click();
-  await expect(a.locator(".video small")).toContainText(
+  await expect(a.locator(".video-status")).toContainText(
     /fetch|kết nối|Network/i,
   );
   await a.getByTestId("square-56").click();
@@ -290,7 +308,7 @@ test("two independent browsers: register, private room, move, chat, WebRTC conse
   await expect(b.locator(".moves li")).toHaveCount(3);
   await a.getByRole("button", { name: "Kết thúc gọi", exact: true }).click();
   await a.unroute("**/api/matches/*/rtc-config");
-  await a.getByRole("button", { name: "▣ Lưu ván", exact: true }).click();
+  await a.getByRole("button", { name: "Lưu ván", exact: true }).click();
   await b
     .locator(".request")
     .getByRole("button", { name: "Đồng ý", exact: true })
@@ -312,11 +330,11 @@ test("two independent browsers: register, private room, move, chat, WebRTC conse
     .getByRole("button", { name: "Sẵn sàng tiếp tục", exact: true })
     .click();
   await expect(
-    a.getByRole("button", { name: "▣ Lưu ván", exact: true }),
+    a.getByRole("button", { name: "Lưu ván", exact: true }),
   ).toBeVisible();
   await expect(a.locator(".moves li")).toHaveCount(3);
-  a.once("dialog", (d) => d.accept());
   await a.getByRole("button", { name: "Đầu hàng", exact: true }).click();
+  await a.locator(".swal2-confirm").click();
   await expect(
     b.getByRole("button", { name: "Xem kỳ phổ", exact: true }),
   ).toBeVisible();
@@ -324,7 +342,7 @@ test("two independent browsers: register, private room, move, chat, WebRTC conse
   await expect(
     b.getByRole("heading", { name: "Phát lại kỳ phổ" }),
   ).toBeVisible();
-  await b.getByRole("button", { name: "→|", exact: true }).click();
+  await b.getByRole("button", { name: "Đến nước cuối", exact: true }).click();
   await expect(b.locator(".moves li")).toHaveCount(3);
   await a.screenshot({
     path: "docs/implementation/pvp-desktop.png",
@@ -343,9 +361,7 @@ test("TC-064/067/068 offline reload and 10 human plies, no Backend calls, local 
   const context = await browser.newContext();
   const page = await context.newPage();
   await page.goto("/");
-  await page
-    .getByRole("button", { name: "◇ Chơi với máy", exact: true })
-    .click();
+  await page.getByRole("button", { name: "Chơi với máy", exact: true }).click();
   await expect(page.locator(".offline-state")).toContainText("đã cache", {
     timeout: 15000,
   });
@@ -356,9 +372,7 @@ test("TC-064/067/068 offline reload and 10 human plies, no Backend calls, local 
       backendRequests.push(r.url());
   });
   await page.reload();
-  await page
-    .getByRole("button", { name: "◇ Chơi với máy", exact: true })
-    .click();
+  await page.getByRole("button", { name: "Chơi với máy", exact: true }).click();
   await page
     .getByRole("combobox", { name: "Độ khó", exact: true })
     .selectOption("easy");
@@ -392,20 +406,16 @@ test("TC-064/067/068 offline reload and 10 human plies, no Backend calls, local 
   }
   expect(backendRequests).toEqual([]);
   await page.reload();
-  await page
-    .getByRole("button", { name: "◇ Chơi với máy", exact: true })
-    .click();
+  await page.getByRole("button", { name: "Chơi với máy", exact: true }).click();
   await page
     .getByRole("button", { name: "Tiếp tục ván cục bộ", exact: true })
     .click();
   await expect(page.locator(".moves li")).toHaveCount(20);
-  await page.getByRole("button", { name: "↶ Hoàn tác", exact: true }).click();
+  await page.getByRole("button", { name: "Hoàn tác", exact: true }).click();
   await expect(page.locator(".moves li")).toHaveCount(18);
   await page.evaluate(() => sessionStorage.clear());
   await page.reload();
-  await page
-    .getByRole("button", { name: "◇ Chơi với máy", exact: true })
-    .click();
+  await page.getByRole("button", { name: "Chơi với máy", exact: true }).click();
   await expect(
     page.getByRole("button", { name: "Tiếp tục ván cục bộ", exact: true }),
   ).toHaveCount(0);
@@ -462,9 +472,7 @@ test("TC-067 authenticated User recovers IndexedDB game after offline reload wit
     if (/\/api\/|\/socket.io/.test(r.url())) requests.push(r.url());
   });
   await page.reload();
-  await page
-    .getByRole("button", { name: "◇ Chơi với máy", exact: true })
-    .click();
+  await page.getByRole("button", { name: "Chơi với máy", exact: true }).click();
   await page
     .getByRole("button", { name: "Tiếp tục ván cục bộ", exact: true })
     .click();
@@ -487,9 +495,7 @@ test("responsive 390px, local AI and screenshots", async ({ page }) => {
   expect(
     await page.evaluate(() => document.documentElement.scrollWidth),
   ).toBeLessThanOrEqual(390);
-  await page
-    .getByRole("button", { name: "◇ Chơi với máy", exact: true })
-    .click();
+  await page.getByRole("button", { name: "Chơi với máy", exact: true }).click();
   await expect(page.getByTestId("board")).toBeVisible();
   expect(
     await page.evaluate(() => document.documentElement.scrollWidth),
@@ -510,7 +516,7 @@ test("TC-016/019 two browser guests open invitation URL and race for the last se
     c = await cContext.newPage();
   await owner.goto("/");
   await owner
-    .getByRole("button", { name: "♜ Vào sảnh với tư cách khách", exact: true })
+    .getByRole("button", { name: "Vào sảnh với tư cách khách", exact: true })
     .click();
   await expect(owner.locator(".connection")).toContainText("Trực tuyến");
   const response = owner.waitForResponse(
@@ -531,13 +537,13 @@ test("TC-016/019 two browser guests open invitation URL and race for the last se
   await Promise.all([
     b
       .getByRole("button", {
-        name: "♜ Vào sảnh với tư cách khách",
+        name: "Vào sảnh với tư cách khách",
         exact: true,
       })
       .click(),
     c
       .getByRole("button", {
-        name: "♜ Vào sảnh với tư cách khách",
+        name: "Vào sảnh với tư cách khách",
         exact: true,
       })
       .click(),
@@ -554,7 +560,11 @@ test("TC-016/019 two browser guests open invitation URL and race for the last se
     .poll(async () =>
       Promise.all(
         losers.map(async (p) =>
-          (await p.locator(".notice").allTextContents()).join(""),
+          (
+            await p
+              .locator('[data-sonner-toast]:not([data-type="loading"])')
+              .allTextContents()
+          ).join(""),
         ),
       ),
     )
@@ -575,9 +585,7 @@ test("TC-066 Undo terminates a real thinking Worker; hint and corrupted local sn
     };
   });
   await page.goto("/");
-  await page
-    .getByRole("button", { name: "◇ Chơi với máy", exact: true })
-    .click();
+  await page.getByRole("button", { name: "Chơi với máy", exact: true }).click();
   await page
     .getByRole("combobox", { name: "Độ khó", exact: true })
     .selectOption("hard");
@@ -604,7 +612,7 @@ test("TC-066 Undo terminates a real thinking Worker; hint and corrupted local sn
       }),
   );
   expect(frames).toBeGreaterThan(2);
-  await page.getByRole("button", { name: "↶ Hoàn tác", exact: true }).click();
+  await page.getByRole("button", { name: "Hoàn tác", exact: true }).click();
   await expect(page.locator(".moves li")).toHaveCount(0);
   expect(
     await page.evaluate(() => (window as any).workerStops),
@@ -612,7 +620,9 @@ test("TC-066 Undo terminates a real thinking Worker; hint and corrupted local sn
   await page.waitForTimeout(1600);
   await expect(page.locator(".moves li")).toHaveCount(0);
   await page.getByRole("button", { name: "✧ Gợi ý", exact: true }).click();
-  await expect(page.locator(".notice")).toContainText("Gợi ý:", {
+  await expect(
+    page.locator('[data-sonner-toast]:not([data-type="loading"])'),
+  ).toContainText("Gợi ý:", {
     timeout: 6000,
   });
   await page.evaluate(() =>
@@ -626,7 +636,9 @@ test("TC-066 Undo terminates a real thinking Worker; hint and corrupted local sn
     ),
   );
   await page.reload();
-  await expect(page.locator(".notice")).toContainText("không hợp lệ");
+  await expect(
+    page.locator('[data-sonner-toast]:not([data-type="loading"])'),
+  ).toContainText("không hợp lệ");
 });
 test("TC-065 missing Worker cache asset produces explicit failure while offline", async ({
   browser,
@@ -634,9 +646,7 @@ test("TC-065 missing Worker cache asset produces explicit failure while offline"
   const context = await browser.newContext();
   const page = await context.newPage();
   await page.goto("/");
-  await page
-    .getByRole("button", { name: "◇ Chơi với máy", exact: true })
-    .click();
+  await page.getByRole("button", { name: "Chơi với máy", exact: true }).click();
   await expect(page.locator(".offline-state")).toContainText("đã cache");
   await page.evaluate(async () => {
     for (const name of await caches.keys()) {
@@ -653,7 +663,9 @@ test("TC-065 missing Worker cache asset produces explicit failure while offline"
     .click();
   await page.getByTestId("square-54").click();
   await page.getByTestId("square-45").click();
-  await expect(page.locator(".notice")).toContainText(/Worker AI|quá lâu/, {
+  await expect(
+    page.locator('[data-sonner-toast]:not([data-type="loading"])'),
+  ).toContainText(/Worker AI|quá lâu/, {
     timeout: 6000,
   });
   await expect(page.locator(".moves li")).toHaveCount(1);

@@ -5,3 +5,7 @@ dist
 test-results
 playwright-report
 .git
+
+**/.env
+**/node_modules
+**/dist

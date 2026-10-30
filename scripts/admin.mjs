@@ -1,4 +1,4 @@
-import "dotenv/config";
+import "../server/env.mjs";
 import { PrismaClient } from "@prisma/client";
 const email = process.argv[2];
 if (!email) {

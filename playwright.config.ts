@@ -17,7 +17,7 @@ export default defineConfig({
     },
   },
   webServer: {
-    command: "npx vite preview --host 127.0.0.1 --port 5174 --strictPort",
+    command: "npm run preview",
     url: "http://127.0.0.1:5174",
     reuseExistingServer: true,
   },
