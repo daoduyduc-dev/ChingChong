@@ -84,3 +84,9 @@ npx playwright test --config tests/deploy/browsers.config.ts
 Không chạy đồng thời hai runner dùng cùng local `_test` database. Acceptance tạo account/đổi role QA, không chạy trên dữ liệu thật. Dừng rehearsal bằng `docker compose -p kyvien-render-check -f compose.render-local.yaml --env-file .local/render-check.env stop`, không xóa volume.
 
 Nguồn: [Blueprint](https://render.com/docs/blueprint-spec), [Postgres](https://render.com/docs/postgresql-creating-connecting), [Free limits](https://render.com/docs/free), [Google OAuth](https://developers.google.com/identity/protocols/oauth2/web-server). JSON Schema và rehearsal local không thay nghiệm thu Render/Google thật.
+
+## Email khôi phục và đổi mật khẩu
+
+Render Free chặn cổng SMTP 25/465/587. Dùng Brevo Transactional Email API qua HTTPS: tạo tài khoản Brevo, bật gửi transactional email, xác minh địa chỉ người gửi, tạo API key. Trên Render đặt `BREVO_API_KEY` và `MAIL_FROM` (email người gửi đã xác minh), rồi deploy. Tài khoản Brevo có thể cần xét duyệt trước khi gửi được; gửi thử thật tới Gmail, kể cả hộp thư Spam. Không ghi API key vào Git hay chat. Khi dùng địa chỉ gửi Gmail, Brevo có thể thay đổi địa chỉ From để đáp ứng chính sách nhà cung cấp; domain riêng đã xác thực tăng khả năng nhận thư.
+
+Người dùng yêu cầu liên kết tại Quên mật khẩu hoặc Hồ sơ → Bảo mật tài khoản. Liên kết hiệu lực 30 phút, chỉ dùng một lần; đổi mật khẩu thu hồi phiên và vô hiệu các liên kết cũ. Nếu chưa cấu hình gửi thư, chức năng chưa sẵn sàng. SMTP vẫn hỗ trợ trên host cho phép kết nối bằng `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM`.

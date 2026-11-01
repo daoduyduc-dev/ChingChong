@@ -1,3 +1,4 @@
+import { mailConfigured } from "./auth";
 import express from "express";
 import { createServer } from "node:http";
 import cors from "cors";
@@ -141,7 +142,7 @@ export function makeApp(game = new GameService(), auth = new AuthService()) {
           process.env.GOOGLE_CLIENT_SECRET
         ),
       },
-      smtp: !!process.env.SMTP_HOST,
+      smtp: mailConfigured(),
     }),
   );
   app.post(
@@ -244,11 +245,11 @@ export function makeApp(game = new GameService(), auth = new AuthService()) {
   );
   app.post(
     "/api/auth/change-password",
-    route((req, res) => auth.change(actor(res), req.body, res)),
+    route((_req, res) => auth.change(actor(res))),
   );
   app.post(
     "/api/auth/set-password",
-    route((req, res) => auth.setPassword(actor(res), req.body, res)),
+    route((_req, res) => auth.change(actor(res))),
   );
   app.post(
     "/api/auth/oauth/:provider/link",

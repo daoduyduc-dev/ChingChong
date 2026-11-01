@@ -50,6 +50,12 @@ export const cookieOptions = {
   path: "/api/auth",
   maxAge: 30 * 86400000,
 };
+export function mailConfigured() {
+  return !!(
+    (process.env.BREVO_API_KEY && process.env.MAIL_FROM) ||
+    (process.env.SMTP_HOST && process.env.SMTP_FROM)
+  );
+}
 export class AuthService {
   onRevoke: (id: string) => Promise<void> = async () => {};
   private tail: Promise<unknown> = Promise.resolve();
@@ -204,15 +210,11 @@ export class AuthService {
   }
   async forgot(input: unknown) {
     const { email } = z.object({ email: z.email() }).parse(input);
-    assert(
-      process.env.SMTP_HOST && process.env.SMTP_FROM,
-      "SMTP_NOT_CONFIGURED",
-      503,
-    );
+    assert(mailConfigured(), "SMTP_NOT_CONFIGURED", 503);
     const u = await db.user.findUnique({
       where: { email: email.toLowerCase() },
     });
-    if (u?.passwordHash && u.status === "ACTIVE" && !u.deletedAt) {
+    if (u && u.status === "ACTIVE" && !u.deletedAt) {
       const token = randomBytes(32).toString("hex");
       await db.resetToken.create({
         data: {
@@ -221,24 +223,43 @@ export class AuthService {
           expiresAt: new Date(Date.now() + 1800000),
         },
       });
-      const transport = nodemailer.createTransport({
-        host: process.env.SMTP_HOST,
-        port: Number(process.env.SMTP_PORT ?? 587),
-        secure: process.env.SMTP_PORT === "465",
-        connectionTimeout: 10000,
-        greetingTimeout: 10000,
-        socketTimeout: 15000,
-        auth: process.env.SMTP_USER
-          ? { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS }
-          : undefined,
-      });
       try {
-        await transport.sendMail({
-          from: process.env.SMTP_FROM,
-          to: u.email,
-          subject: "Kỳ Viện — đặt lại mật khẩu",
-          text: `Mở liên kết trong 30 phút: ${process.env.APP_URL}/?reset=${token}`,
-        });
+        const text = `Mở liên kết trong 30 phút: ${process.env.APP_URL}/?reset=${token}`;
+        if (process.env.BREVO_API_KEY && process.env.MAIL_FROM) {
+          const response = await fetch("https://api.brevo.com/v3/smtp/email", {
+            method: "POST",
+            headers: {
+              "api-key": process.env.BREVO_API_KEY,
+              "content-type": "application/json",
+            },
+            body: JSON.stringify({
+              sender: { name: "Kỳ Viện", email: process.env.MAIL_FROM },
+              to: [{ email: u.email }],
+              subject: "Kỳ Viện — đặt lại mật khẩu",
+              textContent: text,
+            }),
+            signal: AbortSignal.timeout(15000),
+          });
+          if (!response.ok) throw Error("EMAIL_DELIVERY_FAILED");
+        } else {
+          const transport = nodemailer.createTransport({
+            host: process.env.SMTP_HOST,
+            port: Number(process.env.SMTP_PORT ?? 587),
+            secure: process.env.SMTP_PORT === "465",
+            connectionTimeout: 10000,
+            greetingTimeout: 10000,
+            socketTimeout: 15000,
+            auth: process.env.SMTP_USER
+              ? { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS }
+              : undefined,
+          });
+          await transport.sendMail({
+            from: process.env.SMTP_FROM,
+            to: u.email,
+            subject: "Kỳ Viện — đặt lại mật khẩu",
+            text,
+          });
+        }
       } catch {
         await db.audit.create({
           data: {
@@ -266,8 +287,10 @@ export class AuthService {
             r && !r.usedAt && r.expiresAt.getTime() > Date.now(),
             "RESET_INVALID",
           );
-          await tx.resetToken.update({
-            where: { hash: r.hash },
+          const u = await tx.user.findUnique({ where: { id: r.userId } });
+          assert(u && u.status === "ACTIVE" && !u.deletedAt, "RESET_INVALID");
+          await tx.resetToken.updateMany({
+            where: { userId: r.userId, usedAt: null },
             data: { usedAt: new Date() },
           });
           await tx.user.update({
@@ -289,40 +312,10 @@ export class AuthService {
     });
     return { message: "Mật khẩu đã thay đổi. Hãy đăng nhập lại." };
   }
-  async change(a: Actor, input: unknown, res: Response) {
+  async change(a: Actor) {
     assert(!a.guest, "FORBIDDEN", 403);
-    const d = z.object({ current: z.string(), password }).parse(input),
-      u = await db.user.findUniqueOrThrow({ where: { id: a.id } });
-    assert(
-      u.passwordHash && (await bcrypt.compare(d.current, u.passwordHash)),
-      "INVALID_CREDENTIALS",
-      401,
-    );
-    const passwordHash = await bcrypt.hash(d.password, 12);
-    return this.serial(async () => {
-      await db.user.update({ where: { id: a.id }, data: { passwordHash } });
-      return this.issue(a.id, null, res);
-    });
-  }
-  async setPassword(a: Actor, input: unknown, res: Response) {
-    assert(!a.guest, "FORBIDDEN", 403);
-    const d = z.object({ password }).parse(input);
-    const u = await db.user.findUniqueOrThrow({ where: { id: a.id } }),
-      session = await db.session.findUniqueOrThrow({
-        where: { id: a.sessionId },
-      });
-    assert(
-      !u.passwordHash &&
-        (await db.identity.count({ where: { userId: a.id } })) > 0 &&
-        Date.now() - session.createdAt.getTime() < 300000,
-      "OAUTH_REAUTHENTICATION_REQUIRED",
-      403,
-    );
-    const passwordHash = await bcrypt.hash(d.password, 12);
-    return this.serial(async () => {
-      await db.user.update({ where: { id: a.id }, data: { passwordHash } });
-      return this.issue(a.id, null, res);
-    });
+    const u = await db.user.findUniqueOrThrow({ where: { id: a.id } });
+    return this.forgot({ email: u.email });
   }
   async oauthStart(
     provider: "google" | "facebook",

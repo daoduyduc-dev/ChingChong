@@ -260,3 +260,46 @@ it("Reset mail crosses a real local SMTP socket, stores only hash, and delivery 
     }),
   ).toBe(1);
 });
+
+it("Brevo sends a confirmation link for password changes and invalidates all older links", async () => {
+  vi.stubEnv("BREVO_API_KEY", "test-api-key");
+  vi.stubEnv("MAIL_FROM", "sender@tests.invalid");
+  vi.stubEnv("APP_URL", "https://chess.example.com");
+  const deliveries: Array<{ to: { email: string }[]; textContent: string }> =
+    [];
+  const send = vi.fn(async (_url: string, init: RequestInit) => {
+    deliveries.push(JSON.parse(String(init.body)));
+    return new Response(JSON.stringify({ messageId: "test" }), { status: 201 });
+  });
+  vi.stubGlobal("fetch", send);
+  const name = "email_" + randomUUID().slice(0, 8);
+  const email = name + "@tests.invalid";
+  await auth.register(
+    { username: name, email, password: "Chess12345" },
+    response().res,
+  );
+  const session = await auth.login(
+    { identifier: name, password: "Chess12345" },
+    response().res,
+  );
+  ids.push(session.actor.id);
+  await auth.change(session.actor);
+  await auth.forgot({ email });
+  expect(deliveries).toHaveLength(2);
+  expect(deliveries[0].to[0].email).toBe(email);
+  const token = (message: string) =>
+    new URL(message.split(" ").at(-1)!).searchParams.get("reset")!;
+  const old = token(deliveries[0].textContent);
+  const latest = token(deliveries[1].textContent);
+  expect(old).toBeTruthy();
+  await auth.reset({ token: latest, password: "NewChess123" });
+  await expect(
+    auth.reset({ token: old, password: "OtherChess123" }),
+  ).rejects.toThrow("RESET_INVALID");
+  await expect(auth.authenticate(session.token)).rejects.toThrow(
+    "SESSION_REVOKED",
+  );
+  await expect(
+    auth.login({ identifier: name, password: "NewChess123" }, response().res),
+  ).resolves.toBeTruthy();
+});

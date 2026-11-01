@@ -644,6 +644,8 @@ export function App() {
             password: f.get("password"),
           });
           notify(result.message);
+          disconnect();
+          setActor(null);
           setAuthMode("login");
           history.replaceState({}, "", location.pathname);
           return;
@@ -2047,7 +2049,7 @@ export function App() {
               setProfile={setProfile}
               setActor={setActor}
               config={config}
-              attach={attach}
+
               run={run}
               onDeleted={() => {
                 disconnect();

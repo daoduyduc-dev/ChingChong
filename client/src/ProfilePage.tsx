@@ -8,7 +8,6 @@ export function ProfilePage({
   setProfile,
   setActor,
   config,
-  attach,
   onDeleted,
   run,
 }: {
@@ -16,7 +15,6 @@ export function ProfilePage({
   setProfile: Dispatch<SetStateAction<any>>;
   setActor: Dispatch<SetStateAction<Actor | null>>;
   config: any;
-  attach: (session: any) => void;
   onDeleted: () => void;
   run: (action: () => Promise<unknown>) => Promise<void>;
 }) {
@@ -133,54 +131,23 @@ export function ProfilePage({
         </section>
         <section className="card">
           <h2>Bảo mật tài khoản</h2>
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              const f = new FormData(e.currentTarget);
+          <p>
+            Gửi liên kết xác nhận đến email của tài khoản để đặt mật khẩu mới.
+          </p>
+          <button
+            disabled={!config.smtp}
+            onClick={() =>
               void run(async () => {
-                attach(
-                  await api(
-                    profile.hasPassword
-                      ? "/auth/change-password"
-                      : "/auth/set-password",
-                    "POST",
-                    {
-                      current: f.get("current"),
-                      password: f.get("password"),
-                    },
-                  ),
-                );
-                notify("Đã đổi mật khẩu và thu hồi phiên cũ.");
-              });
-            }}
+                const result = await api("/auth/change-password", "POST", {});
+                notify(result.message);
+              })
+            }
           >
-            {profile.hasPassword && (
-              <label>
-                Mật khẩu hiện tại
-                <input
-                  name="current"
-                  type="password"
-                  autoComplete="current-password"
-                  required
-                />
-              </label>
-            )}
-            <label>
-              Mật khẩu mới
-              <input
-                name="password"
-                type="password"
-                autoComplete="new-password"
-                minLength={8}
-                required
-              />
-            </label>
-            <button>
-              {profile.hasPassword
-                ? "Đổi mật khẩu"
-                : "Thiết lập mật khẩu sau đăng nhập OAuth"}
-            </button>
-          </form>
+            {profile.hasPassword
+              ? "Đổi mật khẩu qua email"
+              : "Thiết lập mật khẩu qua email"}
+          </button>
+          {!config.smtp && <small>Dịch vụ email chưa được cấu hình.</small>}
           <div className="actions">
             {(["google"] as const).map((provider) => (
               <button
