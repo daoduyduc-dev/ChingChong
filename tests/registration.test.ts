@@ -2,7 +2,7 @@ import { afterAll, expect, it } from "vitest";
 import request from "supertest";
 import { randomUUID } from "node:crypto";
 import { makeApp } from "../server/src/app";
-import { db } from "../server/src/db";
+import { db } from "../server/src/database/db";
 const runtime = makeApp();
 const usernames: string[] = [];
 const guestIds: string[] = [];

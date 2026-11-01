@@ -11,7 +11,14 @@ Luồng tài khoản: đăng ký thành công → giao diện đăng nhập → 
 ```text
 QLDA/
 ├── client/                 # Frontend
-│   ├── src/                # React, giao diện, API client, AI Worker
+│   ├── src/
+│   │   ├── components/     # Các thành phần giao diện tái sử dụng
+│   │   ├── pages/          # Các màn hình theo chức năng
+│   │   ├── hooks/          # React hooks
+│   │   ├── services/       # API, lưu trữ local, thông báo, ảnh
+│   │   ├── workers/        # AI Web Worker
+│   │   ├── App.tsx         # Điều phối trạng thái và màn hình
+│   │   └── main.tsx        # Điểm khởi động React
 │   ├── public/             # Icon và licenses
 │   ├── dist/               # FE sau npm run build (không commit)
 │   ├── index.html
@@ -19,7 +26,15 @@ QLDA/
 │   ├── tsconfig.json
 │   └── package.json
 ├── server/                 # Backend
-│   ├── src/                # Express, Socket.IO, auth, database, game
+│   ├── src/
+│   │   ├── controllers/    # HTTP routes: auth, user, social, game, admin
+│   │   ├── services/       # Nghiệp vụ auth, đăng nhập, ván cờ
+│   │   ├── repositories/   # Truy vấn lịch sử và session
+│   │   ├── database/       # Prisma client
+│   │   ├── middleware/     # Phục vụ frontend
+│   │   ├── common/         # Lỗi domain dùng chung
+│   │   ├── app.ts          # Khởi tạo Express và Socket.IO
+│   │   └── index.ts        # Điểm khởi động server
 │   ├── prisma/             # Schema và migrations
 │   ├── env.mjs             # Nạp server/.env, không phụ thuộc thư mục chạy
 │   ├── .env                # Secrets riêng, không commit
@@ -38,6 +53,8 @@ QLDA/
 ├── Dockerfile
 └── compose.yaml
 ```
+
+Controller nhận yêu cầu HTTP và gọi service; service xử lý nghiệp vụ; repository tập trung truy vấn dữ liệu. Các routes nằm trong controller theo nhóm chức năng; kết nối Socket.IO vẫn được điều phối tại `server/src/app.ts`. `game.ts` và một số controller còn truy cập Prisma trực tiếp để giữ nguyên giao dịch và thứ tự xử lý. Không xem đây là kiến trúc phân lớp đã hoàn tất cho mọi chức năng.
 
 Trên Render: FE + `/api` + `/socket.io` cùng một Web Service → Prisma → Supabase PostgreSQL. Dev local dùng Vite proxy. AI Worker và luật cờ nằm trong shared; ván AI lưu IndexedDB/sessionStorage trong trình duyệt.
 
@@ -197,7 +214,7 @@ docker compose --env-file server/.env up --build
 - Đã chuyển cấu trúc sang `client/`, `server/src/`, `server/prisma/`, secrets tại `server/.env`; các tài liệu nghiệm thu cũ trong `docs/implementation/` có thể dùng đường dẫn trước khi chuyển.
 - Sau chuyển: Prisma generate, typecheck FE/BE/tests, build FE, lint và kiểm tra lockfile bằng `npm ci --dry-run` đều đạt; **65/65 test hồi quy** và **8/8 E2E** đạt với PostgreSQL local UTF-8. E2E chạy bản preview thông qua lệnh workspace, gồm PvP/WebRTC, hồ sơ và AI offline.
 - `npm run dev` đã được chạy với Supabase thật: BE/FE health đều HTTP 200 và hai trình duyệt tạo/vào phòng public thành công. Docker chưa chạy do máy chưa có lệnh Docker; cấu hình đã cập nhật đường dẫn/cổng.
-- Bản sửa tick chậm được giữ nguyên trong `server/src/game.ts`: chỉ có một tick đang chờ/chạy để không tích lũy trước thao tác tạo/vào phòng. Đo lại sau chuyển: tạo phòng public 3501ms, vào phòng 3996ms qua Supabase thật; xem `docs/implementation/public-room-check.json`. Đây là một lần đo, không cam kết hiệu năng.
+- Bản sửa tick chậm được giữ nguyên trong `server/src/services/game.ts`: chỉ có một tick đang chờ/chạy để không tích lũy trước thao tác tạo/vào phòng. Đo lại sau chuyển: tạo phòng public 3501ms, vào phòng 3996ms qua Supabase thật; xem `docs/implementation/public-room-check.json`. Đây là một lần đo, không cam kết hiệu năng.
 - OAuth/SMTP thật, TURN qua mạng khác và FE/BE deploy public vẫn cần kiểm chứng riêng; không suy từ kiểm thử trên máy phát triển thành nghiệm thu cloud toàn hệ thống.
 
 

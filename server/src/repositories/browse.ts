@@ -1,8 +1,8 @@
 import { z } from "zod";
 import { Prisma, type Match } from "@prisma/client";
-import { db } from "./db";
-import { assert } from "./errors";
-import type { MatchState } from "../../shared/domain";
+import { db } from "../database/db";
+import { assert } from "../common/errors";
+import type { MatchState } from "../../../shared/domain";
 type Query = Record<string, unknown>;
 export function pagination(query: Query) {
   const limit = z.coerce

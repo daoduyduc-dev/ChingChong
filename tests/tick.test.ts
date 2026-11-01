@@ -1,6 +1,6 @@
 import { afterEach, expect, it, vi } from "vitest";
-import { GameService } from "../server/src/game";
-import { db } from "../server/src/db";
+import { GameService } from "../server/src/services/game";
+import { db } from "../server/src/database/db";
 
 afterEach(() => vi.restoreAllMocks());
 

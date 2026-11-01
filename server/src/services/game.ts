@@ -1,7 +1,7 @@
 import { randomInt, randomUUID } from "node:crypto";
 import { Prisma } from "@prisma/client";
-import { db } from "./db";
-import { assert } from "./errors";
+import { db } from "../database/db";
+import { assert } from "../common/errors";
 import {
   initial,
   fen,
@@ -10,13 +10,13 @@ import {
   play,
   type Move,
   type Side,
-} from "../../shared/chess";
+} from "../../../shared/chess";
 import type {
   Actor,
   MatchState,
   RequestKind,
   RoomState,
-} from "../../shared/domain";
+} from "../../../shared/domain";
 export class GameService {
   private tail: Promise<unknown> = Promise.resolve();
   private pendingTick?: Promise<void>;

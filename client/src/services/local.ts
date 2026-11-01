@@ -1,6 +1,6 @@
 import { get, set } from "idb-keyval";
-import { initial, play, type Position } from "../../shared/chess";
-import type { Actor } from "../../shared/domain";
+import { initial, play, type Position } from "../../../shared/chess";
+import type { Actor } from "../../../shared/domain";
 export type LocalGame = {
   position: Position;
   human: "red" | "black";

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { api, message } from "./api";
+import { api, message } from "../services/api";
 import { ListSkeleton } from "./Skeleton";
 
 export const modeNames: Record<string, string> = {

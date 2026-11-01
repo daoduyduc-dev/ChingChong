@@ -1,3 +1,3 @@
-import "../env.mjs";
+import "../../env.mjs";
 import { PrismaClient } from "@prisma/client";
 export const db = new PrismaClient();

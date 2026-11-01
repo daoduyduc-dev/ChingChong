@@ -4,7 +4,7 @@ import { spawn } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import type { AddressInfo } from "node:net";
 import { makeApp } from "../../server/src/app";
-import { db } from "../../server/src/db";
+import { db } from "../../server/src/database/db";
 
 it("existing acceptance journeys pass against a bounded local backend and preview", async () => {
   const backend = makeApp();

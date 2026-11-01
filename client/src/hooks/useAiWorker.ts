@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { legal, outcome, play } from "../../shared/chess";
-import type { Actor } from "../../shared/domain";
-import { saveLocal, type LocalGame } from "./local";
-import { notify } from "./notifications";
+import { legal, outcome, play } from "../../../shared/chess";
+import type { Actor } from "../../../shared/domain";
+import { saveLocal, type LocalGame } from "../services/local";
+import { notify } from "../services/notifications";
 export function useAiWorker({
   enabled,
   game,
@@ -44,7 +44,7 @@ export function useAiWorker({
     const id = ++generation.current;
     let w: Worker;
     try {
-      w = new Worker(new URL("./ai.worker.ts", import.meta.url), {
+      w = new Worker(new URL("../workers/ai.worker.ts", import.meta.url), {
         type: "module",
       });
     } catch {

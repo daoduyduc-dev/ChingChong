@@ -1,5 +1,5 @@
 import { io, type Socket } from "socket.io-client";
-import type { Actor } from "../../shared/domain";
+import type { Actor } from "../../../shared/domain";
 let token = "";
 let sessionKey = "";
 let sessionChanged:

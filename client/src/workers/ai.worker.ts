@@ -1,4 +1,4 @@
-import { choose } from "../../shared/ai";
+import { choose } from "../../../shared/ai";
 self.onmessage = (e) => {
   try {
     self.postMessage({

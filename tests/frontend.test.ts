@@ -5,7 +5,7 @@ import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { spawnSync } from "node:child_process";
-import { mountFrontend } from "../server/src/frontend";
+import { mountFrontend } from "../server/src/middleware/frontend";
 import { makeApp } from "../server/src/app";
 
 const directory = mkdtempSync(join(tmpdir(), "kyvien-fe-"));

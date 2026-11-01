@@ -9,7 +9,7 @@ import {
 } from "react";
 import QRCode from "qrcode";
 import { Toaster, toast } from "sonner";
-import { confirmAction, requestReport, notify } from "./notifications";
+import { confirmAction, requestReport, notify } from "./services/notifications";
 import {
   api,
   connect,
@@ -19,12 +19,12 @@ import {
   refresh,
   socket,
   onSessionChanged,
-} from "./api";
-import { Board } from "./Board";
-import { HistoryView, PublicProfile } from "./DataViews";
-import { AuthDialog } from "./AuthDialog";
-import { Navigation, type Page } from "./Navigation";
-import { NotificationPanel } from "./NotificationPanel";
+} from "./services/api";
+import { Board } from "./components/Board";
+import { HistoryView, PublicProfile } from "./components/DataViews";
+import { AuthDialog } from "./components/AuthDialog";
+import { Navigation, type Page } from "./components/Navigation";
+import { NotificationPanel } from "./components/NotificationPanel";
 import {
   Bell,
   SkipBack,
@@ -35,17 +35,17 @@ import {
   Bookmark,
   Inbox,
 } from "lucide-react";
-import { LobbyPage } from "./LobbyPage";
-import { FriendsPage } from "./FriendsPage";
-import { ProfilePage } from "./ProfilePage";
-import { PlayerClock } from "./PlayerClock";
-import { PwaUpdate } from "./PwaUpdate";
-import { useAiWorker } from "./useAiWorker";
+import { LobbyPage } from "./pages/LobbyPage";
+import { FriendsPage } from "./pages/FriendsPage";
+import { ProfilePage } from "./pages/ProfilePage";
+import { PlayerClock } from "./components/PlayerClock";
+import { PwaUpdate } from "./components/PwaUpdate";
+import { useAiWorker } from "./hooks/useAiWorker";
 const AdminView = lazy(() =>
-  import("./AdminView").then((module) => ({ default: module.AdminView })),
+  import("./pages/AdminView").then((module) => ({ default: module.AdminView })),
 );
 const Video = lazy(() =>
-  import("./Video").then((module) => ({ default: module.Video })),
+  import("./components/Video").then((module) => ({ default: module.Video })),
 );
 
 import {
@@ -64,7 +64,7 @@ import type {
   RequestKind,
   RoomState,
 } from "../../shared/domain";
-import { loadLocal, saveLocal, type LocalGame } from "./local";
+import { loadLocal, saveLocal, type LocalGame } from "./services/local";
 const minutes = [0, 5, 10, 15, 30];
 const levelNames = { easy: "Dễ", medium: "Trung bình", hard: "Khó" };
 const kindNames = {
@@ -564,7 +564,7 @@ export function App() {
         if (reg.active) {
           const keys = await caches.keys();
           if (!keys.some((k) => k.startsWith("workbox-precache"))) return;
-          const w = new Worker(new URL("./ai.worker.ts", import.meta.url), {
+          const w = new Worker(new URL("./workers/ai.worker.ts", import.meta.url), {
             type: "module",
           });
           const timer = setTimeout(() => w.terminate(), 3000);
@@ -1338,7 +1338,7 @@ export function App() {
                           }
                           onClick={() => {
                             const w = new Worker(
-                              new URL("./ai.worker.ts", import.meta.url),
+                              new URL("./workers/ai.worker.ts", import.meta.url),
                               { type: "module" },
                             );
                             hintWorker.current = w;

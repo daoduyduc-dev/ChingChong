@@ -1,8 +1,8 @@
 import type { Dispatch, SetStateAction } from "react";
-import type { Actor } from "../../shared/domain";
-import { api } from "./api";
-import { notify, confirmAction } from "./notifications";
-import { compressAvatar } from "./avatar";
+import type { Actor } from "../../../shared/domain";
+import { api } from "../services/api";
+import { notify, confirmAction } from "../services/notifications";
+import { compressAvatar } from "../services/avatar";
 export function ProfilePage({
   profile,
   setProfile,

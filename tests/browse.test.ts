@@ -3,7 +3,7 @@ import request from "supertest";
 import { registerAndLogin } from "./helpers/auth";
 import { randomUUID } from "node:crypto";
 import { makeApp } from "../server/src/app";
-import { db } from "../server/src/db";
+import { db } from "../server/src/database/db";
 import { initial } from "../shared/chess";
 const runtime = makeApp();
 const ids: string[] = [];

@@ -1,8 +1,8 @@
 import type { Dispatch, SetStateAction } from "react";
-import type { Actor } from "../../shared/domain";
-import { api } from "./api";
-import { notify } from "./notifications";
-import { ListSkeleton } from "./Skeleton";
+import type { Actor } from "../../../shared/domain";
+import { api } from "../services/api";
+import { notify } from "../services/notifications";
+import { ListSkeleton } from "../components/Skeleton";
 export function FriendsPage({
   actor,
   busy,

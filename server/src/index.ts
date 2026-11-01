@@ -1,7 +1,7 @@
 import "../env.mjs";
 import { makeApp } from "./app";
-import { db } from "./db";
-import { secret } from "./auth";
+import { db } from "./database/db";
+import { secret } from "./services/auth";
 secret();
 const { http, game, io } = makeApp();
 await db.$connect();

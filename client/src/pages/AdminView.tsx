@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
-import type { Actor } from "../../shared/domain";
-import { api, message } from "./api";
-import { notify, confirmAction } from "./notifications";
+import type { Actor } from "../../../shared/domain";
+import { api, message } from "../services/api";
+import { notify, confirmAction } from "../services/notifications";
 import {
   modeNames,
   statuses,
@@ -9,7 +9,7 @@ import {
   ListingFooter,
   ModeSelect,
   type Row,
-} from "./DataViews";
+} from "../components/DataViews";
 export function AdminView({ actor }: { actor: Actor }) {
   const [tab, setTab] = useState("users"),
     [search, setSearch] = useState(""),

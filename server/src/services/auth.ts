@@ -4,9 +4,9 @@ import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
 import type { Request, Response, NextFunction } from "express";
 import { z } from "zod";
-import { db } from "./db";
-import { assert } from "./errors";
-import type { Actor } from "../../shared/domain";
+import { db } from "../database/db";
+import { assert } from "../common/errors";
+import type { Actor } from "../../../shared/domain";
 export const hash = (s: string) => createHash("sha256").update(s).digest("hex");
 export const password = z
   .string()

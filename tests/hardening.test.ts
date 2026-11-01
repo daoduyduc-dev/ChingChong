@@ -2,8 +2,8 @@ import { it, expect, afterEach, afterAll, vi } from "vitest";
 import { createServer } from "node:net";
 import { randomUUID } from "node:crypto";
 import type { Request, Response } from "express";
-import { AuthService, hash } from "../server/src/auth";
-import { db } from "../server/src/db";
+import { AuthService, hash } from "../server/src/services/auth";
+import { db } from "../server/src/database/db";
 
 const auth = new AuthService();
 const ids: string[] = [];

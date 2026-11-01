@@ -2,11 +2,11 @@ import { beforeAll, afterAll, describe, it, expect } from "vitest";
 import request from "supertest";
 import { registerAndLogin } from "./helpers/auth";
 import { randomUUID } from "node:crypto";
-import { db } from "../server/src/db";
+import { db } from "../server/src/database/db";
 import { makeApp } from "../server/src/app";
-import { hash } from "../server/src/auth";
+import { hash } from "../server/src/services/auth";
 import jwt from "jsonwebtoken";
-import { secret } from "../server/src/auth";
+import { secret } from "../server/src/services/auth";
 const { app, io, http } = makeApp();
 // Fixture creation is a separate loopback client; behavioral scenarios keep the real auth budget.
 app.set("trust proxy", "loopback");

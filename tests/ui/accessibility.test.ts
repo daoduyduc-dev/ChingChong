@@ -5,7 +5,7 @@ import { preview, type PreviewServer } from "vite";
 import { fileURLToPath } from "node:url";
 import type { AddressInfo } from "node:net";
 import { makeApp } from "../../server/src/app";
-import { db } from "../../server/src/db";
+import { db } from "../../server/src/database/db";
 import { initial } from "../../shared/chess";
 import { randomUUID } from "node:crypto";
 import type { MatchState } from "../../shared/domain";

@@ -12,9 +12,9 @@ import { registerAndLogin } from "./helpers/auth";
 import { io as connect, type Socket } from "socket.io-client";
 import { randomUUID } from "node:crypto";
 import { makeApp } from "../server/src/app";
-import { GameService } from "../server/src/game";
-import { db } from "../server/src/db";
-import { DomainError } from "../server/src/errors";
+import { GameService } from "../server/src/services/game";
+import { db } from "../server/src/database/db";
+import { DomainError } from "../server/src/common/errors";
 import type { Actor, RoomState } from "../shared/domain";
 
 describe("database flows", () => {

@@ -7,7 +7,7 @@ import {
   type Move,
   type Position,
   type Side,
-} from "../../shared/chess";
+} from "../../../shared/chess";
 export function Board({
   position,
   side = "red",

@@ -9,7 +9,7 @@ function railway(domain: string, appUrl = "") {
       "tsx",
       "--input-type=module",
       "-e",
-      "await import('./server/env.mjs'); const {cookieOptions}=await import('./server/src/auth.ts'); console.log(JSON.stringify({url:process.env.APP_URL||null,host:process.env.API_HOST,serve:process.env.SERVE_CLIENT,secure:cookieOptions.secure}));",
+      "await import('./server/env.mjs'); const {cookieOptions}=await import('./server/src/services/auth.ts'); console.log(JSON.stringify({url:process.env.APP_URL||null,host:process.env.API_HOST,serve:process.env.SERVE_CLIENT,secure:cookieOptions.secure}));",
     ],
     {
       env: {

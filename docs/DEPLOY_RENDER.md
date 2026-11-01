@@ -6,7 +6,7 @@
 
 ## 1. Đưa bản code mới lên GitHub
 
-Repository phải có `render.yaml`, `server/src/frontend.ts` và các thay đổi liên quan. Render không đọc mã còn nằm riêng trên máy. Không đưa `.env`, `.local`, backup dump hoặc node_modules lên Git. Mã được chuẩn bị để triển khai; chưa tạo tài nguyên cloud. Chọn nhánh main sau khi bản cập nhật đã push thành công.
+Repository phải có `render.yaml`, `server/src/middleware/frontend.ts` và các thay đổi liên quan. Render không đọc mã còn nằm riêng trên máy. Không đưa `.env`, `.local`, backup dump hoặc node_modules lên Git. Mã được chuẩn bị để triển khai; chưa tạo tài nguyên cloud. Chọn nhánh main sau khi bản cập nhật đã push thành công.
 
 ## 2. Tạo bằng Blueprint
 

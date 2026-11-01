@@ -5,7 +5,7 @@ import { randomUUID } from "node:crypto";
 import { fileURLToPath } from "node:url";
 import type { AddressInfo } from "node:net";
 import { makeApp } from "../../server/src/app";
-import { db } from "../../server/src/db";
+import { db } from "../../server/src/database/db";
 
 let browser: Browser, frontend: PreviewServer, origin: string;
 const backend = makeApp();

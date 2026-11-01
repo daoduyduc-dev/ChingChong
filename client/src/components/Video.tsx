@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import type { MatchState, Actor } from "../../shared/domain";
-import { api, emit, socket, message } from "./api";
+import type { MatchState, Actor } from "../../../shared/domain";
+import { api, emit, socket, message } from "../services/api";
 import {
   Camera,
   CameraOff,

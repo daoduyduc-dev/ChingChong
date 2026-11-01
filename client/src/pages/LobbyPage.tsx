@@ -1,10 +1,10 @@
 import { useState, type FormEvent, type ReactNode } from "react";
-import type { Actor, MatchState, RoomState } from "../../shared/domain";
-import type { Page } from "./Navigation";
+import type { Actor, MatchState, RoomState } from "../../../shared/domain";
+import type { Page } from "../components/Navigation";
 import { Bot, ChessKnight, Inbox } from "lucide-react";
-import { api } from "./api";
-import { notify } from "./notifications";
-import { ListSkeleton } from "./Skeleton";
+import { api } from "../services/api";
+import { notify } from "../services/notifications";
+import { ListSkeleton } from "../components/Skeleton";
 const minutes = [0, 5, 10, 15, 30];
 const statusNames: Record<string, string> = {
   WAITING: "Chờ kỳ thủ",
